@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<robot name="gps_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
+	<!-- ====================================================
+                         	Misc
+     ========================================================= -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps.urdf.xacro" />
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps_quad.urdf.xacro" />
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps_with_mast.urdf.xacro" />
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps-with-periodicnoisebox.urdf.xacro" />
+
+</robot>

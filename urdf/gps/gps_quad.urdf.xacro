@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<robot name="sensor_gps" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+
+  	<xacro:macro name="sensor_gps_quad" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
+
+		<joint name="${name}_joint" type="revolute">
+			<axis xyz="0 1 0"/>
+			<xacro:insert_block name="origin"/>
+			<parent link="${parent}"/>
+			<child link="${name}_link"/>
+			<dynamics damping="1.0"/>
+               <limit effort="0" velocity="0" lower="0" upper="0" />
+		</joint>
+
+		<link name="${name}_link">
+			<inertial>
+				<mass value="0.001"/>
+				<origin rpy="0 0 0" xyz="0 0 0"/>
+				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+			</inertial>
+			<visual>
+				<origin rpy="0 0 0" xyz="0 0 0"/>
+				<geometry>
+					<mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+				</geometry>
+				<xacro:color_material color="${color}"/>
+			</visual>
+		</link>
+
+		<!-- ====================================================
+						  Gazebo
+		========================================================= -->
+
+		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+
+		<gazebo reference="${name}_link">
+			<sensor name="${name}_sensor" type="gps">
+                    <pose>0 0 0 0 0 0</pose>
+                    <always_on>1</always_on>
+                    <update_rate>1000.0</update_rate>
+               </sensor>
+		</gazebo>
+
+		<gazebo>
+			<plugin name="${name}_controller" filename="libhector_gazebo_ros_gps.so">
+				<alwaysOn>1</alwaysOn>
+				<updateRate>${update_rate}</updateRate>
+				<bodyName>${name}_link</bodyName> <!-- must be the link of the gps device, not the base_link or base_footprint -->
+				<!-- <frameId>${name}_link</frameId> -->
+				<topicName>${name}</topicName>
+				<referenceLatitude>${ref_lat}</referenceLatitude>
+				<referenceLongitude>${ref_long}</referenceLongitude>
+				<referenceHeading>${ref_head}</referenceHeading>
+				<velocityTopicName>${name}/fix_velocity</velocityTopicName>
+				<drift>${drift} ${drift} ${drift}</drift>
+				<gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
+				<velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
+				<velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
+			</plugin>
+		</gazebo>
+
+	</xacro:macro>
+
+	<!--<xacro:include filename="$(find terrasentia_sensors)/config/dropouts.xml"/>-->
+
+</robot>

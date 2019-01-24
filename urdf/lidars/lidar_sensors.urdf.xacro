@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot name="lidar_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
+	<!-- Hokuyo urg04lx -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/hokuyo_urg04lx.urdf.xacro" />
+
+	<!-- Hokuyo utm30lx -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/hokuyo_utm30lx.urdf.xacro" />
+
+	<!-- Hokuyo ust10lx -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/hokuyo_ust10lx.urdf.xacro" />
+	<!-- Hokuyo 3d -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/hokuyo3d.urdf.xacro" />
+
+	<!-- Sick s3000 -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/sick_s3000.urdf.xacro" />
+
+	<!-- Sick s300 -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/sick_s300.urdf.xacro" />
+
+	<!-- Sick Tim 571 -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/sick_tim571.urdf.xacro" />
+
+	<!-- Rplidar -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/rplidar.urdf.xacro" />
+
+	<!-- Velodyne VLP-16 (Puck) -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/vlp_16.urdf.xacro" />
+
+	<!-- Velodyne VLP-16 (Puck) -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/hdl_32e.urdf.xacro" />
+
+</robot>

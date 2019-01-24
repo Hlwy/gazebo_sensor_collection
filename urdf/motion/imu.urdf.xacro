@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot name="sensor_imu" xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+
+     <xacro:macro name="sensor_imu" params="name parent *origin color">
+
+          <joint name="${name}_joint" type="fixed">
+               <axis xyz="1 0 0"/>
+               <xacro:insert_block name="origin"/>
+               <parent link="${parent}"/>
+               <child link="${name}_link"/>
+          </joint>
+
+          <link name="${name}_link">
+               <inertial>
+                    <mass value="0.001"/>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+               </inertial>
+               <visual>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <geometry>
+                         <box size="0.01 0.01 0.001"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
+               <collision>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <geometry>
+                         <box size=".01 .01 .001"/>
+                    </geometry>
+               </collision>
+          </link>
+
+          <!-- ====================================================
+                                Gazebo
+          ========================================================= -->
+
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
+
+          <gazebo>
+               <plugin name="${name}_controller" filename="libgazebo_ros_imu.so">
+                    <topicName>${name}/data</topicName>
+                    <serviceName>${name}/service</serviceName>
+                    <bodyName>${name}_link</bodyName>
+                    <gaussianNoise>0.005</gaussianNoise>
+               </plugin>
+          </gazebo>
+
+     </xacro:macro>
+
+</robot>

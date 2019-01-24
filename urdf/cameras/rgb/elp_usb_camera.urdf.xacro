@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+
+     <xacro:macro name="sensor_elp_usb_cam" params="name parent *origin color">
+          <joint name="${name}_joint" type="fixed">
+               <xacro:insert_block name="origin"/>
+               <parent link="${parent}"/>
+               <child link="${name}_link"/>
+          </joint>
+
+          <link name="${name}_link"> <!-- TODO: review masses, inertial -->
+               <inertial>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+                    <mass value="0.001"/>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+               </inertial>
+               <visual>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+                         <xacro:color_material color="${color}"/>
+                         <geometry>
+                              <mesh filename="package://terrasentia_sensors/meshes/board_camera.dae" scale="1.0 1.0 1.0"/>
+                         </geometry>
+               </visual>
+               <collision>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="package://terrasentia_sensors/meshes/board_camera.dae" scale="1.0 1.0 1.0"/>
+                    </geometry>
+               </collision>
+          </link>
+
+          <joint name="${name}_rgb_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 0 0" />
+               <parent link="${name}_link"/>
+               <child link="${name}_rgb_frame"/>
+          </joint>
+
+          <link name="${name}_rgb_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0000001" ixy="0.0" ixz="0.0" iyy="0.0000001" iyz="0.0" izz="0.0000001" />
+               </inertial>
+          </link>
+
+          <joint name="${name}_rgb_optical_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="1.5707 0 1.5707" />
+               <parent link="${name}_rgb_frame"/>
+               <child link="${name}_rgb_optical_frame"/>
+          </joint>
+
+          <link name="${name}_rgb_optical_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0000001" ixy="0.0" ixz="0.0" iyy="0.0000001" iyz="0.0" izz="0.0000001" />
+               </inertial>
+          </link>
+
+          <sensor_elp_usb_cam_gazebo />
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
+
+     </xacro:macro>
+
+     <!-- ====================================================
+                           Gazebo
+     ========================================================= -->
+
+     <xacro:macro name="sensor_elp_usb_cam_gazebo">
+          <gazebo reference="${name}_link">
+               <sensor type="camera" name="${name}_sensor">
+                    <update_rate>120.0</update_rate>
+
+                    <camera name="head">
+                         <horizontal_fov>1.3962634</horizontal_fov>
+                         <image>
+                              <width>640</width>
+                              <height>480</height>
+                              <format>R8G8B8</format>
+                         </image>
+                         <clip>
+                              <near>0.03</near>
+                              <far>300</far>
+                         </clip>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.007</stddev>
+                         </noise>
+                    </camera>
+
+                    <plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
+                         <alwaysOn>true</alwaysOn>
+                         <updateRate>120.0</updateRate>
+                         <cameraName>${name}</cameraName>
+                         <imageTopicName>image_raw</imageTopicName>
+                         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                         <frameName>${name}_rgb_frame</frameName>
+                         <distortionK1>-4.038943295208831108e-01</distortionK1>
+                         <distortionK2>2.388478977112300575e-02</distortionK2>
+                         <distortionK3>3.314636582903376927e-01</distortionK3>
+                         <distortionT1>5.197040541998677703e-03</distortionT1>
+                         <distortionT2>2.107365030484196263e-03</distortionT2>
+                    </plugin>
+               </sensor>
+          </gazebo>
+
+     </xacro:macro>
+
+</robot>

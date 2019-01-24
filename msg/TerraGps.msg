@@ -1,0 +1,13 @@
+float64 time
+float64 latitude
+float64 longitude
+float64 altitude
+float64 reference_latitude
+float64 reference_longitude
+float64 reference_altitude
+float64 reference_heading
+XYZ_Base velocity
+XYZ_Base covariance
+uint8 covariance_type
+uint16 service
+int8 status

@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<sensors>
+
+	<!-- ===============================================
+	                      GPS
+	==================================================== -->
+	<sensor id="simpleGps">
+		<name>Simple GPS</name>
+		<type>gps</type>
+		<modelPath>gps.urdf.xacro</modelPath>
+		<macroCall>sensor_gps</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+
+	<sensor id="simpleGpsMast">
+		<name>Simple GPS w/ Mast</name>
+		<type>gps</type>
+		<modelPath>gps_with_mast.urdf.xacro</modelPath>
+		<macroCall>sensor_gps_with_mast</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+
+	<sensor id="complexGps">
+		<name>Complex GPS w/ Dropouts</name>
+		<type>gps</type>
+		<modelPath>gps-with-periodicnoisebox.urdf.xacro</modelPath>
+		<macroCall>sensor_gps_with_dropout</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+
+	<!-- ===============================================
+	                      IMU
+	==================================================== -->
+	<sensor id="simpleImu">
+		<name>Simple IMU</name>
+		<type>imu</type>
+		<modelPath>imu.urdf.xacro</modelPath>
+		<macroCall>sensor_imu</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+
+	<sensor id="hectorImu">
+		<name>Hector IMU</name>
+		<type>imu</type>
+		<modelPath>imu_hector_plugin.urdf.xacro</modelPath>
+		<macroCall>sensor_imu_hector</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+
+	<sensor id="terraImu">
+		<name>Terra-Custom IMU</name>
+		<type>imu</type>
+		<modelPath>imu_terra_plugin.urdf.xacro</modelPath>
+		<macroCall>sensor_imu_terra</macroCall>
+		<customizable>1</customizable>
+	</sensor>
+	<!-- ===============================================
+	                      Lidars
+	==================================================== -->
+	<sensor id="ust10lx">
+		<name>Hokuyo UST-10LX</name>
+		<type>lidar</type>
+		<modelPath>hokuyo_ust10lx.urdf.xacro</modelPath>
+		<macroCall>sensor_hokuyo_ust10lx</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="urg04lx">
+		<name>Hokuyo URG-04LX</name>
+		<type>lidar</type>
+		<modelPath>hokuyo_urg04lx.urdf.xacro</modelPath>
+		<macroCall>sensor_hokuyo_urg04lx</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="utm30lx">
+		<name>Hokuyo UTM-30LX</name>
+		<type>lidar</type>
+		<modelPath>hokuyo_utm30lx.urdf.xacro</modelPath>
+		<macroCall>sensor_hokuyo_utm30lx</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="hokuyo3d">
+		<name>Hokuyo 3D</name>
+		<type>lidar</type>
+		<modelPath>hokuyo3d.urdf.xacro</modelPath>
+		<macroCall>sensor_hokuyo3d</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="sick300">
+		<name>Sick S300</name>
+		<type>lidar</type>
+		<modelPath>sick_s300.urdf.xacro</modelPath>
+		<macroCall>sensor_sick_s300</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="sick3000">
+		<name>Sick S3000</name>
+		<type>lidar</type>
+		<modelPath>sick_s3000.urdf.xacro</modelPath>
+		<macroCall>sensor_sick_s3000</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="sicktim571">
+		<name>Sick TIM-571</name>
+		<type>lidar</type>
+		<modelPath>sick_tim571.urdf.xacro</modelPath>
+		<macroCall>sensor_sick_tim571</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="rplidar">
+		<name>RPLidar</name>
+		<type>lidar</type>
+		<modelPath>rplidar.urdf.xacro</modelPath>
+		<macroCall>sensor_rplidar</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<!-- ===============================================
+	                      RGB Cameras
+	==================================================== -->
+	<sensor id="axis5013">
+		<name>Axis M5013</name>
+		<type>rgb</type>
+		<modelPath>axis_m5013.urdf.xacro</modelPath>
+		<macroCall>sensor_axis_m5013</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="axis5512">
+		<name>Axis P5512</name>
+		<type>rgb</type>
+		<modelPath>axis_p5512.urdf.xacro</modelPath>
+		<macroCall>sensor_axis_p5512</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="ueyeCP">
+		<name>GigE uEye CP</name>
+		<type>rgb</type>
+		<modelPath>ueye_cp_gige.urdf.xacro</modelPath>
+		<macroCall>sensor_ueye_cp_gige</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<!-- ===============================================
+	                      RGBD Cameras
+	==================================================== -->
+	<sensor id="xtionPro">
+		<name>Asus Xtion Pro</name>
+		<type>rgbd</type>
+		<modelPath>asus_xtion_pro.urdf.xacro</modelPath>
+		<macroCall>sensor_asus_xtion_pro</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="kinect">
+		<name>Kinect</name>
+		<type>rgbd</type>
+		<modelPath>kinect.urdf.xacro</modelPath>
+		<macroCall>sensor_kinect</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="kinectV2">
+		<name>Kinect V2</name>
+		<type>rgbd</type>
+		<modelPath>kinectv2.urdf.xacro</modelPath>
+		<macroCall>sensor_kinectv2</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="fotonicE">
+		<name>Fotonic E-Series</name>
+		<type>rgbd</type>
+		<modelPath>fotonic_e.urdf.xacro</modelPath>
+		<macroCall>sensor_fotonic</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+	<sensor id="orbbecAstra">
+		<name>OrbBec Astra</name>
+		<type>rgbd</type>
+		<modelPath>orbbec_astra.urdf.xacro</modelPath>
+		<macroCall>sensor_orbbec_astra</macroCall>
+		<customizable>0</customizable>
+	</sensor>
+
+</sensors>

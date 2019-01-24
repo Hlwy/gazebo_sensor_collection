@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <!-- ====================================================
+                           Material Colors
+     ========================================================= -->
+
+     <xacro:macro name="color_material" params="color">
+
+          <xacro:if value="${color == 'black'}">
+               <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'white'}">
+               <material name="white">
+                    <color rgba="1.0 1.0 1.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'grey'}">
+               <material name="grey">
+                    <color rgba="0.6 0.6 0.6 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'orange'}">
+               <material name="orange">
+                    <color rgba="1.0 0.8 0.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'yellow'}">
+               <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'green'}">
+               <material name="green">
+                    <color rgba="0.0 1.0 0.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'blue'}">
+               <material name="blue">
+                    <color rgba="0.0 0.0 1.0 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'brown'}">
+               <material name="brown">
+                    <color rgba="0.6 0.4 0.08 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'purple'}">
+               <material name="purple">
+                    <color rgba="0.5 0.0 0.5 1.0"/>
+               </material>
+          </xacro:if>
+
+          <xacro:if value="${color == 'red'}">
+               <material name="red">
+                    <color rgba="1.0 0.0 0.0 1.0"/>
+               </material>
+          </xacro:if>
+     </xacro:macro>
+
+     <!-- ====================================================
+                           Gazebo Colors
+     ========================================================= -->
+     <xacro:macro name="color_gazebo" params="parent color">
+          <gazebo reference="${parent}">
+               <xacro:if value="${color == 'black'}">
+                    <material value="Gazebo/Black"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'white'}">
+                    <material value="Gazebo/White"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'grey'}">
+                    <material value="Gazebo/Grey"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'orange'}">
+                    <material value="Gazebo/Orange"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'yellow'}">
+                    <material value="Gazebo/Yellow"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'green'}">
+                    <material value="Gazebo/Green"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'blue'}">
+                    <material value="Gazebo/Blue"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'brown'}">
+                    <material value="Gazebo/Brown"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'purple'}">
+                    <material value="Gazebo/Purple"/>
+               </xacro:if>
+
+               <xacro:if value="${color == 'red'}">
+                    <material value="Gazebo/Red"/>
+               </xacro:if>
+          </gazebo>
+     </xacro:macro>
+
+</robot>

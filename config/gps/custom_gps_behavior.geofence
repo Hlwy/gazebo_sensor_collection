@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+	<field_gps_noise_characteristics>
+		<biomass_height_noise_coefficient>
+			<r1>0</r1>
+			<r2>.2</r2>
+			<mean>1</mean>
+			<variance>1</variance>
+		</biomass_height_noise_coefficient>
+		<biomass_height_noise_coefficient>
+			<r1>.2</r1>
+			<r2>.5</r2>
+			<mean>1</mean>
+			<variance>1.2</variance>
+		</biomass_height_noise_coefficient>
+		<biomass_height_noise_coefficient>
+			<r1>.5</r1>
+			<r2>1</r2>
+			<mean>1</mean>
+			<variance>1.5</variance>
+		</biomass_height_noise_coefficient>
+		<biomass_height_noise_coefficient>
+			<r1>1</r1>
+			<r2>2</r2>
+			<mean>1</mean>
+			<variance>4</variance>
+		</biomass_height_noise_coefficient>
+		<biomass_height_noise_coefficient>
+			<r1>2</r1>
+			<r2>-1</r2>
+			<mean>1</mean>
+			<variance>5</variance>
+		</biomass_height_noise_coefficient>
+	</field_gps_noise_characteristics>
+</robot>

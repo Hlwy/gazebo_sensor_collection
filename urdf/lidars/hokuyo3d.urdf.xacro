@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<robot name="sensor_hokuyo3d" xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+
+     <xacro:macro name="sensor_hokuyo3d" params="name visualize:=false parent *origin color">
+
+          <joint name="${name}_fix_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_fix_link"/>
+          </joint>
+
+          <link name="${name}_fix_link">
+               <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <box size="0.05 0.05 0.08"/>
+                    </geometry>
+               </collision>
+
+               <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="package://terrasentia_sensors/meshes/hokuyo3d.stl"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
+
+               <inertial>
+                    <mass value="1e-5" />
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+               </inertial>
+          </link>
+
+          <link name="${name}_link"/>
+
+          <joint name="${name}_joint" type="fixed">
+               <parent link="${name}_fix_link"/>
+               <child link="${name}_link"/>
+               <origin xyz="0.08 0 0.08" rpy="0 0 0"/>
+          </joint>
+
+          <!-- Hokuyo sensor for simulation -->
+          <sensor_hokuyo3d_gazebo/>
+          <xacro:color_gazebo parent="${name}_fix_link" color="${color}"/>
+
+     </xacro:macro>
+
+     <!-- ====================================================
+                           Gazebo
+     ========================================================= -->
+
+     <xacro:macro name="sensor_hokuyo3d_gazebo">
+          <gazebo reference="${name}_link">
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>5</update_rate>
+
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>144</samples>
+                                   <resolution>1.0</resolution>
+                                   <min_angle>-1.83591184</min_angle>
+                                   <max_angle>1.83591184</max_angle>
+                              </horizontal>
+                              <vertical>
+                                   <samples>74</samples>
+                                   <resolution>1.0</resolution>
+                                   <min_angle>-0.610865238</min_angle>
+                                   <max_angle>0.0872664626</max_angle>
+                              </vertical>
+                         </scan>
+                         <range>
+                              <min>0.10</min>
+                              <max>20.0</max>
+                              <resolution>0.01</resolution>
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
+
+                    <!-- <plugin name="${name}_controller" filename="libgazebo_ros_block_laser.so"> -->
+                    <plugin name="${name}_controller" filename="libterra_ros_3d_gpu_laser.so">
+                         <topicName>${name}/points</topicName>
+                         <frameName>${name}_link</frameName>
+                    </plugin>
+               </sensor>
+          </gazebo>
+     </xacro:macro>
+
+</robot>

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot name="sensor_hokuyo_utm30lx" xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+
+     <xacro:macro name="sensor_hokuyo_utm30lx" params="name  visualize:=false parent *origin color min_angle:=-1.570796 max_angle:=1.570796">
+
+          <joint name="${name}_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_link"/>
+          </joint>
+
+          <link name="${name}_link">
+               <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="package://terrasentia_sensors/meshes/hokuyo_utm_30lx.dae"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
+
+               <inertial>
+                    <mass value="1e-5" />
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+               </inertial>
+          </link>
+
+          <!-- Hokuyo sensor for simulation -->
+          <sensor_hokuyo_utm_gazebo/>
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
+
+     </xacro:macro>
+
+     <!-- ====================================================
+                           Gazebo
+     ========================================================= -->
+
+     <xacro:macro name="sensor_hokuyo_utm_gazebo">
+          <gazebo reference="${name}_link">
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>40</update_rate>
+
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>1081</samples>
+                                   <resolution>1</resolution>
+                                   <min_angle>${min_angle}</min_angle>
+                                   <max_angle>${max_angle}</max_angle>
+                              </horizontal>
+                         </scan>
+                         <range>
+                              <min>0.10</min>
+                              <max>10.0</max>
+                              <resolution>0.01</resolution>
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
+
+                    <plugin name="${name}_controller" filename="libgazebo_ros_gpu_laser.so">
+                         <topicName>${name}/scan</topicName>
+                         <frameName>${name}_link</frameName>
+                    </plugin>
+               </sensor>
+          </gazebo>
+     </xacro:macro>
+
+</robot>

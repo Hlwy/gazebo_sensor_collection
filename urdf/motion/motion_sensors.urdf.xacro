@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot name="motion_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
+	<!-- ====================================================
+                         	Misc
+     ========================================================= -->
+	<!-- Imu -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu.urdf.xacro" />
+
+	<!-- Imu hector -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_hector_plugin.urdf.xacro" />
+
+	<!-- Imu Terra -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_terra_plugin.urdf.xacro" />
+
+	<!-- Imu for Arducopter -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_quad_plugin.urdf.xacro" />
+
+	<!-- Rotary Encoder -->
+	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/encoder.urdf.xacro" />
+
+</robot>
