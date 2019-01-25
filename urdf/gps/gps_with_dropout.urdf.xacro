@@ -82,9 +82,9 @@
 				<updateRate>${update_rate}</updateRate>
 				<bodyName>${name}_link</bodyName>
 				<frameId>${name}_link</frameId>
-				<topicName>terra/${name}/fix</topicName>
-				<velocityTopicName>terra/${name}/fix_velocity</velocityTopicName>
-				<terraTopicName>terra/${name}</terraTopicName>
+				<topicName>/${name}/fix</topicName>
+				<velocityTopicName>/${name}/fix_velocity</velocityTopicName>
+				<dataTopicName>/${name}</dataTopicName>
 				<referenceLatitude>${ref_lat}</referenceLatitude>
 				<referenceLongitude>${ref_long}</referenceLongitude>
 				<referenceHeading>${ref_head}</referenceHeading>

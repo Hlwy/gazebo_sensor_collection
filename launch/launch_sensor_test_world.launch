@@ -3,7 +3,7 @@
 
      <arg name="use_rviz" default="true"/>
      <arg name="model" default="sensors_attachments.urdf.xacro" />
-     <param name="robot_description" command="$(find xacro)/xacro $(find gazebo_sensor_collection)/include/$(arg model)" />
+     <param name="robot_description" command="$(find xacro)/xacro $(find gazebo_sensor_collection)/launch/include/$(arg model)" />
 
 
      <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -23,6 +23,16 @@
                 <!-- args="-d $(find gazebo_sensor_collection)/config/rviz/tsv2_default_config.rviz" /> -->
      </group>
 
+	<node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+          <param name="publish_frequency" type="double" value="500.0"/>
+		<param name="robot_description" value="robot_description"/>
+     </node>
+
+     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+		<param name="rate" type="double" value="500.0"/>
+	</node>
+
+	<node name="rqt" pkg="rqt_gui" type="rqt_gui"/>
      <!-- <node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args="0 0 0 0 0 0 world odom 100" /> -->
 
 </launch>

@@ -42,7 +42,7 @@
           <gazebo>
                <plugin name="${name}_controller" filename="libhector_gazebo_ros_imu.so">
                     <alwaysOn>true</alwaysOn>
-                    <topicName>terra/${name}</topicName>
+                    <topicName>/${name}</topicName>
                     <serviceName>${name}/service</serviceName>
                     <bodyName>${name}_link</bodyName>
                     <updateRate>${update_rate}</updateRate>
