@@ -1,3 +1,0 @@
-Terra_XYZ_Data accel
-Terra_XYZ_Data gyro
-Terra_Orientation_Data orientation

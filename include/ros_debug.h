@@ -1,5 +1,5 @@
-#ifndef TERRA_ROS_DEBUG_H_
-#define TERRA_ROS_DEBUG_H_
+#ifndef CUSTOM_ROS_DEBUG_H_
+#define CUSTOM_ROS_DEBUG_H_
 
 namespace pc
 {
@@ -51,4 +51,4 @@ namespace pc
 #define ROS_MAGENTA_STREAM_COND(c, x) ROS_INFO_STREAM_COND(c, pc::MAGENTA << x << pc::ENDCOLOR)
 #define ROS_CYAN_STREAM_COND(c, x)    ROS_INFO_STREAM_COND(c, pc::CYAN    << x << pc::ENDCOLOR)
 
-#endif /** TERRA_ROS_DEBUG_H_ */
+#endif /** CUSTOM_ROS_DEBUG_H_ */

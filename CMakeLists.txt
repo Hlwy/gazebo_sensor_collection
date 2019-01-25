@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(terrasentia_sensors)
+project(gazebo_sensor_collection)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
@@ -34,12 +34,12 @@ set( ROS_CXX_DEPENDENCIES
 include (FindPkgConfig)
 # include (SwarmbotsConfig.user.cmake)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(XML libxml-2.0)
-  pkg_check_modules(OGRE OGRE)
-  pkg_check_modules(OGRE-Terrain OGRE-Terrain)
-  pkg_check_modules(OGRE-Paging OGRE-Paging)
+     pkg_check_modules(XML libxml-2.0)
+     pkg_check_modules(OGRE OGRE)
+     pkg_check_modules(OGRE-Terrain OGRE-Terrain)
+     pkg_check_modules(OGRE-Paging OGRE-Paging)
 else()
-  message(FATAL_ERROR "pkg-config is required; please install it")
+     message(FATAL_ERROR "pkg-config is required; please install it")
 endif()
 
 find_package(catkin REQUIRED COMPONENTS ${ROS_CXX_DEPENDENCIES})
@@ -48,15 +48,14 @@ find_package(gazebo REQUIRED)
 find_package(Threads REQUIRED)
 
 execute_process(COMMAND
-  pkg-config --variable=plugindir OGRE
-  OUTPUT_VARIABLE OGRE_PLUGIN_PATH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
+     pkg-config --variable=plugindir OGRE
+     OUTPUT_VARIABLE OGRE_PLUGIN_PATH
+     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 include_directories(
      include
      ${ADDITIONAL_INCLUDE_DIRS}
-     ${SWARMBOTS_DIRS}
      ${catkin_INCLUDE_DIRS}
      ${Boost_INCLUDE_DIRS}
      ${GAZEBO_INCLUDE_DIRS}
@@ -77,39 +76,38 @@ link_directories(
 #######################################
 
 add_message_files(
-  FILES
-  XYZ_Base.msg
-  Euler_Base.msg
-  Quaternion_Base.msg
-  Terra_XYZ_Data.msg
-  Terra_Orientation_Data.msg
-  TerraImu.msg
-  TerraGps.msg
-  TerraEncoder.msg
-  TerraBattery.msg
+     FILES
+     DataXYZ.msg
+     EulerData.msg
+     QuaternionData.msg
+     SensorData3D.msg
+     OrientationSensorData.msg
+     ImuData.msg
+     GpsData.msg
+     EncoderData.msg
+     BatteryData.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES geometry_msgs visualization_msgs terrasentia_sensors
+     DEPENDENCIES
+     geometry_msgs
+     visualization_msgs
+     gazebo_sensor_collection
 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
      INCLUDE_DIRS include
-     LIBRARIES
-     terrasentia_sensors
+     LIBRARIES gazebo_sensor_collection
      CATKIN_DEPENDS ${ROS_CXX_DEPENDENCIES}
-     DEPENDS Boost roscpp gazebo_ros
+     DEPENDS
+     Boost
+     roscpp
+     gazebo_ros
 )
 add_dependencies(${catkin_EXPORTED_TARGETS})
 
@@ -118,29 +116,29 @@ add_dependencies(${catkin_EXPORTED_TARGETS})
 ###################
 
 # Hector-gazebo repo based plugins
-add_library(terra_ros_imu plugins/terra_ros_imu.cpp)
-target_link_libraries(terra_ros_imu ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
-add_dependencies(terra_ros_imu ${PROJECT_NAME}_generate_messages_cpp)
+add_library(gazebo_ros_imu_mod plugins/motion/gazebo_ros_imu_mod.cpp)
+target_link_libraries(gazebo_ros_imu_mod ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(gazebo_ros_imu_mod ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(terra_ros_gps_with_dropout plugins/terra_ros_gps_with_dropout.cpp)
-target_link_libraries(terra_ros_gps_with_dropout ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
-add_dependencies(terra_ros_gps_with_dropout ${PROJECT_NAME}_generate_messages_cpp)
+add_library(gazebo_ros_gps_with_dropout plugins/gps/gazebo_ros_gps_with_dropout.cpp)
+target_link_libraries(gazebo_ros_gps_with_dropout ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(gazebo_ros_gps_with_dropout ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(terra_ros_skid_steer plugins/terra_skid_steering_with_encoder.cpp)
-target_link_libraries(terra_ros_skid_steer ${catkin_LIBRARIES})
-add_dependencies(terra_ros_skid_steer ${PROJECT_NAME}_generate_messages_cpp)
+add_library(gazebo_ros_skid_steer_w_encoder plugins/motion/skid_steering_with_encoder.cpp)
+target_link_libraries(gazebo_ros_skid_steer_w_encoder ${catkin_LIBRARIES})
+add_dependencies(gazebo_ros_skid_steer_w_encoder ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(terra_ros_encoder plugins/terra_encoder.cpp)
-target_link_libraries(terra_ros_encoder ${catkin_LIBRARIES})
-add_dependencies(terra_ros_encoder ${PROJECT_NAME}_generate_messages_cpp)
+add_library(gazebo_ros_encoder plugins/motion/gazebo_encoder.cpp)
+target_link_libraries(gazebo_ros_encoder ${catkin_LIBRARIES})
+add_dependencies(gazebo_ros_encoder ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(terra_ros_battery plugins/terra_sim_battery.cpp)
-target_link_libraries(terra_ros_battery ${catkin_LIBRARIES})
-add_dependencies(terra_ros_battery ${PROJECT_NAME}_generate_messages_cpp)
+add_library(gazebo_ros_battery_simple plugins/misc/gazebo_ros_battery_simple.cpp)
+target_link_libraries(gazebo_ros_battery_simple ${catkin_LIBRARIES})
+add_dependencies(gazebo_ros_battery_simple ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(gazebo_ros_realsense
-     plugins/realsense_gazebo_plugin/RealSensePlugin.cpp
-     plugins/realsense_gazebo_plugin/gazebo_ros_realsense.cpp
+     plugins/vision/RealSensePlugin.cpp
+     plugins/vision/gazebo_ros_realsense.cpp
 )
 target_link_libraries(gazebo_ros_realsense ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(gazebo_ros_realsense ${catkin_EXPORTED_TARGETS})

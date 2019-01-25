@@ -26,7 +26,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#include "../include/gps/terra_ros_gps_with_dropout.h"
+#include "../include/gps/gazebo_ros_gps_with_dropout.h"
 
 // WGS84 constants
 static const double equatorial_radius = 6378137.0;
@@ -312,9 +312,9 @@ void GazeboRosGpsWithGeofencing::Load(physics::ModelPtr _model, sdf::ElementPtr 
 
 	// default parameters
 	frame_id_ = "/world";
-	fix_topic_ = "terra/fix";
-	velocity_topic_ = "terra/fix_velocity";
-	terra_topic_ = "terra/gps";
+	fix_topic_ = "/gps/fix";
+	velocity_topic_ = "/gps/fix_velocity";
+	data_topic_ = "/gps/data";
 
 	reference_latitude_  = DEFAULT_REFERENCE_LATITUDE;
 	reference_longitude_ = DEFAULT_REFERENCE_LONGITUDE;
@@ -330,8 +330,8 @@ void GazeboRosGpsWithGeofencing::Load(physics::ModelPtr _model, sdf::ElementPtr 
 	if (_sdf->HasElement("topicName"))
 		fix_topic_ = _sdf->GetElement("topicName")->GetValue()->GetAsString();
 
-	if (_sdf->HasElement("terraTopicName"))
-		terra_topic_ = _sdf->GetElement("terraTopicName")->GetValue()->GetAsString();
+	if (_sdf->HasElement("dataTopicName"))
+		data_topic_ = _sdf->GetElement("dataTopicName")->GetValue()->GetAsString();
 
 	if (_sdf->HasElement("velocityTopicName"))
 		velocity_topic_ = _sdf->GetElement("velocityTopicName")->GetValue()->GetAsString();
@@ -385,7 +385,7 @@ void GazeboRosGpsWithGeofencing::Load(physics::ModelPtr _model, sdf::ElementPtr 
 	node_handle_ = new ros::NodeHandle(namespace_);
 	fix_publisher_ = node_handle_->advertise<sensor_msgs::NavSatFix>(fix_topic_, 10);
 	velocity_publisher_ = node_handle_->advertise<geometry_msgs::Vector3Stamped>(velocity_topic_, 10);
-	terra_publisher_ = node_handle_->advertise<terrasentia_sensors::TerraGps>(terra_topic_, 10);
+	data_publisher_ = node_handle_->advertise<gazebo_sensor_collection::GpsData>(data_topic_, 10);
 
 	// setup dynamic_reconfigure servers
 	dynamic_reconfigure_server_position_.reset(new dynamic_reconfigure::Server<SensorModelConfig>(ros::NodeHandle(*node_handle_, fix_topic_ + "/position")));
@@ -494,7 +494,7 @@ void GazeboRosGpsWithGeofencing::Update()
 	fix_.position_covariance[4] = position_error_model_.drift.y*position_error_model_.drift.y + position_error_model_.gaussian_noise.y*position_error_model_.gaussian_noise.y;
 	fix_.position_covariance[8] = position_error_model_.drift.z*position_error_model_.drift.z + position_error_model_.gaussian_noise.z*position_error_model_.gaussian_noise.z;
 
-	gps_m.time = sim_time.Double();
+	gps_m.stamp = ros::Time(sim_time.sec, sim_time.nsec);
 	gps_m.latitude = fix_.latitude;
      gps_m.longitude = fix_.longitude;
      gps_m.altitude = fix_.altitude;
@@ -515,7 +515,7 @@ void GazeboRosGpsWithGeofencing::Update()
 
 	fix_publisher_.publish(fix_);
 	velocity_publisher_.publish(velocity_);
-	terra_publisher_.publish(gps_m);
+	data_publisher_.publish(gps_m);
 
 	this->marker_.color.a = 1.0;
 	this->marker_.pose.position.x = position.x;

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include "../include/motion/terra_encoder.h"
+#include "../include/motion/gazebo_encoder.h"
 
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
@@ -11,8 +11,6 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/Twist.h>
-#include <nav_msgs/GetMap.h>
-#include <nav_msgs/Odometry.h>
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
 
@@ -121,7 +119,7 @@ namespace gazebo {
           _nh = new ros::NodeHandle(this->robot_namespace_);
           ROS_INFO_NAMED("sim_encoder", "Starting GazeboRosEncoder Plugin (ns = %s)", this->robot_namespace_.c_str());
 
-          enc_publisher_ = _nh->advertise<terrasentia_sensors::TerraEncoder>(enc_topic_, 1);
+          enc_publisher_ = _nh->advertise<gazebo_sensor_collection::EncoderData>(enc_topic_, 1);
 
           // listen to the update event (broadcast every simulation iteration)
           this->update_connection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosEncoder::UpdateChild, this));

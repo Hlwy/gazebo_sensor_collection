@@ -1,5 +1,5 @@
-#ifndef GAZEBO_ROS_ENCODER_H_
-#define GAZEBO_ROS_ENCODER_H_
+#ifndef GAZEBO_SENSOR_COLLECTION_GAZEBO_ENCODER_H_
+#define GAZEBO_SENSOR_COLLECTION_GAZEBO_ENCODER_H_
 
 #include <map>
 
@@ -22,7 +22,7 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
-#include <terrasentia_sensors/TerraEncoder.h>
+#include <gazebo_sensor_collection/EncoderData.h>
 
 namespace gazebo {
 
@@ -57,7 +57,7 @@ namespace gazebo {
                ros::NodeHandle* _nh;
 
                ros::Publisher enc_publisher_;
-               terrasentia_sensors::TerraEncoder enc_;
+               gazebo_sensor_collection::EncoderData enc_;
 
                boost::mutex lock;
 
@@ -75,5 +75,4 @@ namespace gazebo {
 
 }
 
-
-#endif /* GAZEBO_ROS_ENCODER_H_ */
+#endif /* GAZEBO_SENSOR_COLLECTION_GAZEBO_ENCODER_H_ */

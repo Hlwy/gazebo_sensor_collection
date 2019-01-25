@@ -26,7 +26,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#include "../include/motion/terra_ros_imu.h"
+#include "../include/motion/gazebo_ros_imu_mod.h"
 
 namespace gazebo
 {
@@ -39,13 +39,13 @@ namespace gazebo
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-GazeboRosIMU::GazeboRosIMU()
+GazeboRosIMUMod::GazeboRosIMUMod()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
-GazeboRosIMU::~GazeboRosIMU()
+GazeboRosIMUMod::~GazeboRosIMUMod()
 {
   updateTimer.Disconnect(updateConnection);
 
@@ -62,7 +62,7 @@ GazeboRosIMU::~GazeboRosIMU()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the controller
-void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+void GazeboRosIMUMod::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   count = 0;
 
@@ -89,7 +89,7 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // assert that the body by link_name_ exists
   if (!link)
   {
-    ROS_FATAL("GazeboRosIMU plugin error: bodyName: %s does not exist\n", link_name_.c_str());
+    ROS_FATAL("GazeboRosIMUMod plugin error: bodyName: %s does not exist\n", link_name_.c_str());
     return;
   }
 
@@ -176,7 +176,7 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   if (!bias_topic_.empty())
     bias_pub_ = node_handle_->advertise<sensor_msgs::Imu>(bias_topic_, 10);
 
-  pub_custom_ = node_handle_->advertise<terrasentia_sensors::TerraImu>(custom_topic_, 10);
+  pub_custom_ = node_handle_->advertise<gazebo_sensor_collection::ImuData>(custom_topic_, 10);
 
 #ifdef DEBUG_OUTPUT
   debugPublisher = rosnode_->advertise<geometry_msgs::PoseStamped>(topic_ + "/pose", 10);
@@ -184,10 +184,10 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // advertise services for calibration and bias setting
   if (!serviceName.empty())
-    srv_ = node_handle_->advertiseService(serviceName, &GazeboRosIMU::ServiceCallback, this);
+    srv_ = node_handle_->advertiseService(serviceName, &GazeboRosIMUMod::ServiceCallback, this);
 
-  accelBiasService = node_handle_->advertiseService(topic_ + "/set_accel_bias", &GazeboRosIMU::SetAccelBiasCallback, this);
-  rateBiasService  = node_handle_->advertiseService(topic_ + "/set_rate_bias", &GazeboRosIMU::SetRateBiasCallback, this);
+  accelBiasService = node_handle_->advertiseService(topic_ + "/set_accel_bias", &GazeboRosIMUMod::SetAccelBiasCallback, this);
+  rateBiasService  = node_handle_->advertiseService(topic_ + "/set_rate_bias", &GazeboRosIMUMod::SetRateBiasCallback, this);
 
   // setup dynamic_reconfigure servers
   if (!topic_.empty()) {
@@ -201,18 +201,18 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 #ifdef USE_CBQ
   // start custom queue for imu
-  callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosIMU::CallbackQueueThread,this ) );
+  callback_queue_thread_ = boost::thread( boost::bind( &GazeboRosIMUMod::CallbackQueueThread,this ) );
 #endif
 
   Reset();
 
   // connect Update function
   updateTimer.Load(world, _sdf);
-  updateConnection = updateTimer.Connect(boost::bind(&GazeboRosIMU::Update, this));
+  updateConnection = updateTimer.Connect(boost::bind(&GazeboRosIMUMod::Update, this));
 
 }
 
-void GazeboRosIMU::Reset()
+void GazeboRosIMUMod::Reset()
 {
   updateTimer.Reset();
 
@@ -227,7 +227,7 @@ void GazeboRosIMU::Reset()
 
 ////////////////////////////////////////////////////////////////////////////////
 // returns true always, imu is always calibrated in sim
-bool GazeboRosIMU::ServiceCallback(std_srvs::Empty::Request &req,
+bool GazeboRosIMUMod::ServiceCallback(std_srvs::Empty::Request &req,
                                         std_srvs::Empty::Response &res)
 {
   boost::mutex::scoped_lock scoped_lock(lock);
@@ -235,14 +235,14 @@ bool GazeboRosIMU::ServiceCallback(std_srvs::Empty::Request &req,
   return true;
 }
 
-bool GazeboRosIMU::SetAccelBiasCallback(hector_gazebo_plugins::SetBias::Request &req, hector_gazebo_plugins::SetBias::Response &res)
+bool GazeboRosIMUMod::SetAccelBiasCallback(hector_gazebo_plugins::SetBias::Request &req, hector_gazebo_plugins::SetBias::Response &res)
 {
   boost::mutex::scoped_lock scoped_lock(lock);
   accelModel.reset(math::Vector3(req.bias.x, req.bias.y, req.bias.z));
   return true;
 }
 
-bool GazeboRosIMU::SetRateBiasCallback(hector_gazebo_plugins::SetBias::Request &req, hector_gazebo_plugins::SetBias::Response &res)
+bool GazeboRosIMUMod::SetRateBiasCallback(hector_gazebo_plugins::SetBias::Request &req, hector_gazebo_plugins::SetBias::Response &res)
 {
   boost::mutex::scoped_lock scoped_lock(lock);
   rateModel.reset(math::Vector3(req.bias.x, req.bias.y, req.bias.z));
@@ -251,7 +251,7 @@ bool GazeboRosIMU::SetRateBiasCallback(hector_gazebo_plugins::SetBias::Request &
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update the controller
-void GazeboRosIMU::Update()
+void GazeboRosIMUMod::Update()
 {
   // Get Time Difference dt
   common::Time cur_time = world->GetSimTime();
@@ -417,7 +417,7 @@ void GazeboRosIMU::Update()
 
 
 #ifdef USE_CBQ
-void GazeboRosIMU::CallbackQueueThread()
+void GazeboRosIMUMod::CallbackQueueThread()
 {
   static const double timeout = 0.01;
 
@@ -429,6 +429,6 @@ void GazeboRosIMU::CallbackQueueThread()
 #endif
 
 // Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(GazeboRosIMU)
+GZ_REGISTER_MODEL_PLUGIN(GazeboRosIMUMod)
 
 } // namespace gazebo

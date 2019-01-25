@@ -26,22 +26,22 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef TERRASENTIA_SENSORS_TERRA_ROS_IMU_H
-#define TERRASENTIA_SENSORS_TERRA_ROS_IMU_H
+#ifndef GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_IMU_MOD_H
+#define GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_IMU_MOD_H
 
 #include "../sensor_includes.h"
-#include <terrasentia_sensors/TerraImu.h>
+#include <gazebo_sensor_collection/ImuData.h>
 
 namespace gazebo
 {
-     class GazeboRosIMU : public ModelPlugin
+     class GazeboRosIMUMod : public ModelPlugin
      {
      public:
           /// \brief Constructor
-          GazeboRosIMU();
+          GazeboRosIMUMod();
 
           /// \brief Destructor
-          virtual ~GazeboRosIMU();
+          virtual ~GazeboRosIMUMod();
 
      protected:
           virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
@@ -67,7 +67,7 @@ namespace gazebo
           /// \brief ros message
           sensor_msgs::Imu imuMsg;
           sensor_msgs::Imu biasMsg;
-          terrasentia_sensors::TerraImu imu_m;
+          gazebo_sensor_collection::ImuData imu_m;
 
           /// \brief store link name
           std::string link_name_;
@@ -129,4 +129,4 @@ namespace gazebo
    };
 }
 
-#endif // TERRASENTIA_SENSORS_TERRA_ROS_IMU_H
+#endif // GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_IMU_MOD_H

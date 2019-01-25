@@ -26,18 +26,18 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef TERRASENTIA_SENSORS_TERRA_ROS_GPS_WITH_DROPOUT_H
-#define TERRASENTIA_SENSORS_TERRA_ROS_GPS_WITH_DROPOUT_H
+#ifndef GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_GPS_WITH_DROPOUT_H
+#define GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_GPS_WITH_DROPOUT_H
 
+#include <ros/ros.h>
+#include <ros/package.h>
 #include <geometry_msgs/PointStamped.h>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <ros/ros.h>
-#include <ros/package.h>
 
 #include <vector>
 #include "../sensor_includes.h"
-#include <terrasentia_sensors/TerraGps.h>
+#include <gazebo_sensor_collection/GpsData.h>
 
 namespace gazebo
 {
@@ -188,10 +188,10 @@ private:
 	ros::NodeHandle* node_handle_;
 	ros::Publisher fix_publisher_;
 	ros::Publisher velocity_publisher_;
-	ros::Publisher terra_publisher_;
+	ros::Publisher data_publisher_;
 
 	sensor_msgs::NavSatFix fix_;
-	terrasentia_sensors::TerraGps gps_m;
+	gazebo_sensor_collection::GpsData gps_m;
 	geometry_msgs::Vector3Stamped velocity_;
 
 	std::string namespace_;
@@ -199,7 +199,7 @@ private:
 	std::string frame_id_;
 	std::string fix_topic_;
 	std::string velocity_topic_;
-	std::string terra_topic_;
+	std::string data_topic_;
 
 	double reference_latitude_;
 	double reference_longitude_;
@@ -230,4 +230,4 @@ private:
 
 } // namespace gazebo
 
-#endif // TERRASENTIA_SENSORS_TERRA_ROS_GPS_WITH_DROPOUT_H
+#endif // GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_GPS_WITH_DROPOUT_H

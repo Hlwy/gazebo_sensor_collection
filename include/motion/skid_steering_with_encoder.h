@@ -36,8 +36,8 @@
  * $ Id: 06/25/2013 11:23:40 AM materna $
  */
 
-#ifndef GAZEBO_ROS_SKID_STEER_DRIVE_H_
-#define GAZEBO_ROS_SKID_STEER_DRIVE_H_
+#ifndef GAZEBO_SENSOR_COLLECTION_SKID_STEER_DRIVE_W_ENCODER_H_
+#define GAZEBO_SENSOR_COLLECTION_SKID_STEER_DRIVE_W_ENCODER_H_
 
 #include <map>
 
@@ -60,18 +60,18 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
-#include <terrasentia_sensors/TerraEncoder.h>
+#include <gazebo_sensor_collection/EncoderData.h>
 
 namespace gazebo {
 
   class Joint;
   class Entity;
 
-  class GazeboRosSkidSteerDrive : public ModelPlugin {
+  class GazeboSkidSteerDriveWEncoder : public ModelPlugin {
 
     public:
-	  GazeboRosSkidSteerDrive();
-      ~GazeboRosSkidSteerDrive();
+	  GazeboSkidSteerDriveWEncoder();
+      ~GazeboSkidSteerDriveWEncoder();
       void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
     protected:
@@ -113,10 +113,10 @@ namespace gazebo {
       ros::Subscriber cmd_vel_subscriber_;
       tf::TransformBroadcaster *transform_broadcaster_;
       nav_msgs::Odometry odom_;
-      terrasentia_sensors::TerraEncoder enc_fr;
-      terrasentia_sensors::TerraEncoder enc_fl;
-      terrasentia_sensors::TerraEncoder enc_rr;
-      terrasentia_sensors::TerraEncoder enc_rl;
+      gazebo_sensor_collection::EncoderData enc_fr;
+      gazebo_sensor_collection::EncoderData enc_fl;
+      gazebo_sensor_collection::EncoderData enc_rr;
+      gazebo_sensor_collection::EncoderData enc_rl;
       std::string tf_prefix_;
       bool broadcast_tf_;
 
@@ -159,4 +159,4 @@ namespace gazebo {
 }
 
 
-#endif /* GAZEBO_ROS_SKID_STEER_DRIVE_H_ */
+#endif /* GAZEBO_SENSOR_COLLECTION_SKID_STEER_DRIVE_W_ENCODER_H_ */

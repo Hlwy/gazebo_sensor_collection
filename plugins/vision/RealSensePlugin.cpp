@@ -14,7 +14,7 @@
 // limitations under the License.
 */
 
-#include "RealSensePlugin.h"
+#include "vision/RealSensePlugin.h"
 #include <gazebo/physics/physics.hh>
 #include <gazebo/rendering/DepthCamera.hh>
 #include <gazebo/sensors/sensors.hh>

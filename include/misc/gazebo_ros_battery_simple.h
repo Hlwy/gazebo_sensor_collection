@@ -1,5 +1,5 @@
-#ifndef TERRA_ROS_SIM_BATTERY_H_
-#define TERRA_ROS_SIM_BATTERY_H_
+#ifndef GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_BATTERY_SIMPLE_H_
+#define GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_BATTERY_SIMPLE_H_
 
 #include <map>
 #include <string>
@@ -22,9 +22,9 @@
 
 #include "std_msgs/Bool.h"
 #include <geometry_msgs/Twist.h>
-#include <terrasentia_sensors/TerraBattery.h>
+#include <gazebo_sensor_collection/BatteryData.h>
 
-#include "ros_debug.h"
+#include "../ros_debug.h"
 
 namespace gazebo{
 
@@ -33,7 +33,7 @@ enum power{
     ON = 1
 };
 
-class BatteryPlugin : public ModelPlugin{
+class SimpleBatteryPlugin : public ModelPlugin{
 
 private:
      boost::mutex lock;
@@ -42,7 +42,7 @@ private:
      ros::NodeHandle* _nh;
 
      ros::Publisher battery_level_pub_;
-     terrasentia_sensors::TerraBattery sim_battery_;
+     gazebo_sensor_collection::BatteryData sim_battery_;
      // ros::Publisher charge_state_;
 
      /**  ====================
@@ -101,8 +101,8 @@ private:
 
 public:
 
-     BatteryPlugin();
-     ~BatteryPlugin();
+     SimpleBatteryPlugin();
+     ~SimpleBatteryPlugin();
 
      // Inherited from ModelPlugin
      virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
@@ -114,7 +114,7 @@ public:
 protected:
      virtual void OnUpdate();
 
-}; // BatteryPlugin
+}; // SimpleBatteryPlugin
 
 }
-#endif /** TERRA_ROS_SIM_BATTERY_H_ */
+#endif /** GAZEBO_SENSOR_COLLECTION_GAZEBO_ROS_BATTERY_SIMPLE_H_ */
