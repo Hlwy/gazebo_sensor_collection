@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+     <arg name="use_rviz" default="true"/>
+     <arg name="model" default="sensors_attachments.urdf.xacro" />
+     <param name="robot_description" command="$(find xacro)/xacro $(find gazebo_sensor_collection)/include/$(arg model)" />
+
+
+     <include file="$(find gazebo_ros)/launch/empty_world.launch">
+          <arg name="headless" value="false"/>
+          <arg name="gui" value="true"/>
+          <arg name="verbose" value="true"/>
+     </include>
+
+     <node name="spawn_sensors" pkg="gazebo_ros" type="spawn_model"
+          args="-urdf -param robot_description -model sensor_suite"
+          output="screen"
+     />
+
+     <!-- Start RViz for visualization -->
+     <group if="$(arg use_rviz)">
+          <node name="rviz" pkg="rviz" type="rviz"/>
+                <!-- args="-d $(find gazebo_sensor_collection)/config/rviz/tsv2_default_config.rviz" /> -->
+     </group>
+
+     <!-- <node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args="0 0 0 0 0 0 world odom 100" /> -->
+
+</launch>

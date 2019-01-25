@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:macro name="sensor_encoder" params="ns:=/ parent joint:=front_left_wheel_rev d:=0.15 topic:=/encoder update_rate:=100.0 ppr:=150">
+     <xacro:macro name="sensor_rotary_encoder" params="ns:=/ parent joint:=front_left_wheel_rev d:=0.15 topic:=/encoder update_rate:=100.0 ppr:=150">
 
           <link name="${parent}_encoder_link">
 			<collision>

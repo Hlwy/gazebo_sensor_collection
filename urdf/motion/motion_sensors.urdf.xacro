@@ -16,6 +16,6 @@
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_quad.urdf.xacro" />
 
 	<!-- Rotary Encoder -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/encoder.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/rotary_encoder.urdf.xacro" />
 
 </robot>
