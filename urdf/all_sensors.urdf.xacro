@@ -6,27 +6,27 @@
 	<!-- ====================================================
                          	Cameras
      ========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/cameras/camera_sensors.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/camera_sensors.urdf.xacro" />
 
 	<!-- ====================================================
 						GPS
 	========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps_sensors.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_sensors.urdf.xacro" />
 
 	<!-- ====================================================
                          	LiDAR
      ========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/lidars/lidar_sensors.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/lidars/lidar_sensors.urdf.xacro" />
 
 	<!-- ====================================================
                          	Motion
      ========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/motion_sensors.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/motion_sensors.urdf.xacro" />
 
 
 	<!-- ====================================================
                          	Misc
      ========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/misc/misc_sensors.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/misc_sensors.urdf.xacro" />
 
 </robot>

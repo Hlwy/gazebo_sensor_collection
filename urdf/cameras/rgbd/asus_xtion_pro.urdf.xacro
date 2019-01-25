@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="sensor_asus_xtion_pro" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:property name="asus_xtion_scale" value="1.0"/>
      <xacro:property name="asus_xtion_pro_depth_rel_rgb_py" value="0.0270" />
@@ -48,7 +48,7 @@
                <visual>
                     <origin xyz="-0.01 0 0" rpy="${-M_PI/2} -${M_PI} ${-M_PI/2}"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/asus_xtion_pro_live.dae" scale="${asus_xtion_scale} ${asus_xtion_scale} ${asus_xtion_scale}"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/asus/asus_xtion_pro_live.dae" scale="${asus_xtion_scale} ${asus_xtion_scale} ${asus_xtion_scale}"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>

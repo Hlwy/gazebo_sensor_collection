@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-     <xacro:macro name="sensor_rough_battery" params="ns:=/ name:=5200mAh_LiPo parent:=base_footprint link:=main_battery topic:=terra/battery update_rate:=100.0 tau:=1.9499 vMax:=16.0 vMin:=2.0 v0:=14.0 capacity:=5.2 q0:=5.2 m:=-100.1424 b:=12.694">
+     <xacro:macro name="sensor_battery_approx" params="ns:=/ name:=5200mAh_LiPo parent:=base_footprint link:=main_battery topic:=terra/battery update_rate:=100.0 tau:=1.9499 vMax:=16.0 vMin:=2.0 v0:=14.0 capacity:=5.2 q0:=5.2 m:=-100.1424 b:=12.694">
           <gazebo>
-               <plugin name="${link}_plugin" filename="libterra_ros_battery.so">
+               <plugin name="${link}_plugin" filename="libgazebo_ros_battery_simple.so">
                     <updateRate>${update_rate}</updateRate>
                     <robotNamespace>${ns}</robotNamespace>
                     <robotBaseFrame>${parent}</robotBaseFrame>

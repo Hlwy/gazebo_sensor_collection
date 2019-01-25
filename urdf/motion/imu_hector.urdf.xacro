@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<robot name="sensor_imu_terra" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sensor_imu_hector" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-     <xacro:macro name="sensor_imu_terra" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
+     <xacro:macro name="sensor_imu_hector" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
 
           <joint name="${name}_joint" type="fixed">
                <axis xyz="1 0 0"/>
@@ -16,7 +16,7 @@
                <inertial>
                     <mass value="0.001"/>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
-                    <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.0000001" iyz="0" izz="0.000001"/>
+                    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
                </inertial>
                <visual>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -40,11 +40,9 @@
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
           <gazebo>
-               <plugin name="${name}_controller" filename="libterra_ros_imu.so">
+               <plugin name="${name}_controller" filename="libhector_gazebo_ros_imu.so">
                     <alwaysOn>true</alwaysOn>
-                    <topicName>/${name}</topicName>
-				<topicNameCustom>/${name}/terra</topicNameCustom>
-
+                    <topicName>terra/${name}</topicName>
                     <serviceName>${name}/service</serviceName>
                     <bodyName>${name}_link</bodyName>
                     <updateRate>${update_rate}</updateRate>

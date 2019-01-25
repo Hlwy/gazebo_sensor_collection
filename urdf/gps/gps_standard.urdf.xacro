@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<robot name="sensor_gps_with_dropout" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sensor_standard_gps" xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
-	<xacro:include filename="$(find terrasentia_world)/urdf/includes/macros.urdf.xacro"/>
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-  	<xacro:macro name="sensor_gps_with_dropout" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
+  	<xacro:macro name="sensor_standard_gps" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
 
 		<joint name="${name}_joint" type="fixed">
 			<axis xyz="0 1 0"/>
@@ -22,14 +21,14 @@
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
 				</geometry>
 				<xacro:color_material color="${color}"/>
 			</visual>
 			<collision>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
 				</geometry>
 			</collision>
 		</link>
@@ -41,26 +40,22 @@
 		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
 		<gazebo>
-			<plugin name="${name}_controller" filename="libterra_ros_gps_with_dropout.so">
-				<xacro:include filename="$(find terrasentia_sensors)/config/gps/custom_gps_behavior.geofence"/>
-				<xacro:include filename="$(find terrasentia_sensors)/config/gps/plots.xacro"/>
+			<plugin name="${name}_controller" filename="libgazebo_ros_gps.so">
 				<alwaysOn>1</alwaysOn>
 				<updateRate>${update_rate}</updateRate>
-				<bodyName>${name}_link</bodyName> <!-- must be the link of the gps device, not the base_link or base_footprint -->
+				<bodyName>${name}_link</bodyName>
 				<frameId>${name}_link</frameId>
-				<topicName>terra/${name}/fix</topicName>
-				<velocityTopicName>terra/${name}/fix_velocity</velocityTopicName>
-				<terraTopicName>terra/${name}</terraTopicName>
+				<topicName>/${name}</topicName>
 				<referenceLatitude>${ref_lat}</referenceLatitude>
 				<referenceLongitude>${ref_long}</referenceLongitude>
 				<referenceHeading>${ref_head}</referenceHeading>
+				<velocityTopicName>${name}/fix_velocity</velocityTopicName>
 				<drift>${drift} ${drift} ${drift}</drift>
 				<gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
 				<velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
 				<velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
 			</plugin>
 		</gazebo>
-
 	</xacro:macro>
 
 </robot>

@@ -3,7 +3,7 @@
 	<!-- ====================================================
                          	Misc
      ========================================================= -->
-	<xacro:include filename="sonar.urdf.xacro" />
-	<xacro:include filename="approximate_battery.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/sonar.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/approximate_battery.urdf.xacro" />
 
 </robot>

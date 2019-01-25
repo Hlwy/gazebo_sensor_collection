@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="sensor_orbbec_astra" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:property name="orbbec_astra_scale" value="1.0"/>
      <!-- RGB sensor - cam -->
@@ -55,7 +55,7 @@
                <visual>
                     <origin xyz="0 0 0" rpy="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/orbbec_astra.dae" scale="${orbbec_astra_scale} ${orbbec_astra_scale} ${orbbec_astra_scale}"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/orbbec/orbbec_astra.dae" scale="${orbbec_astra_scale} ${orbbec_astra_scale} ${orbbec_astra_scale}"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>

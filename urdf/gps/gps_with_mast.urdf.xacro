@@ -51,14 +51,14 @@
                <visual>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
                <collision>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                </collision>
           </link>

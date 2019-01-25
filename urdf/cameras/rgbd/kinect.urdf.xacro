@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="sensor_kinect" xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
 	<xacro:property name="M_PI" value="3.1415926535897931" />
 	<xacro:property name="cam_px" value="-0.087" />
@@ -51,7 +51,7 @@
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/kinect.dae"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/cameras/microsoft/kinect.dae"/>
 				</geometry>
 				<xacro:color_material color="${color}"/>
 			</visual>

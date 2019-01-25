@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="sensor_fotonic" xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
 	<xacro:macro name="sensor_fotonic" params="name parent *origin color">
 
@@ -21,14 +21,14 @@
 			<visual>
 				<origin xyz="0.0 0.0 -0.04" rpy="0 0 0" /> <!-- to center the .dae model -->
 				<geometry>
-					<mesh filename= "package://terrasentia_sensors/meshes/fotonic_e.stl" scale="1.0 1.0 1.0"/>
+					<mesh filename= "package://gazebo_sensor_collection/meshes/cameras/acroname/fotonic_e.stl" scale="1.0 1.0 1.0"/>
 				</geometry>
 				<xacro:color_material color="${color}"/>
 			</visual>
 			<collision>
 				<origin xyz="0.0 0 -0.04" rpy="0 0 0" />
 				<geometry>
-					<mesh filename= "package://terrasentia_sensors/meshes/fotonic_e.stl" scale="1.0 1.0 1.0"/>
+					<mesh filename= "package://gazebo_sensor_collection/meshes/cameras/acroname/fotonic_e.stl" scale="1.0 1.0 1.0"/>
 				</geometry>
 			</collision>
 		</link>

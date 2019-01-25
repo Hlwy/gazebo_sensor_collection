@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
 	<xacro:macro name="sensor_sick_tim571" params="prefix visualize:=false parent *origin color min_angle:=-2.36 max_angle:=2.36">
 
@@ -15,14 +15,14 @@
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/sick_tim571.dae"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/lidars/sick/sick_tim571.dae"/>
 				</geometry>
 			</collision>
 
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/sick_tim571.dae"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/lidars/sick/sick_tim571.dae"/>
 				</geometry>
 				<xacro:color_material color="${color}"/>
 			</visual>

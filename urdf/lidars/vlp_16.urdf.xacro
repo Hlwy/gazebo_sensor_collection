@@ -19,12 +19,12 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://terrasentia_sensors/meshes/VLP16_base_1.dae" />
+          <mesh filename="package://gazebo_sensor_collection/meshes/lidars/velodyne/VLP16_base_1.dae" />
         </geometry>
       </visual>
       <visual>
         <geometry>
-          <mesh filename="package://terrasentia_sensors/meshes/VLP16_base_2.dae" />
+          <mesh filename="package://gazebo_sensor_collection/meshes/lidars/velodyne/VLP16_base_2.dae" />
         </geometry>
       </visual>
       <collision>
@@ -50,7 +50,7 @@
       <visual>
         <origin xyz="0 0 -0.0377" />
         <geometry>
-          <mesh filename="package://terrasentia_sensors/meshes/VLP16_scan.dae" />
+          <mesh filename="package://gazebo_sensor_collection/meshes/lidars/velodyne/VLP16_scan.dae" />
         </geometry>
       </visual>
     </link>
@@ -88,12 +88,8 @@
           </noise>
         </ray>
         <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_gpu_laser.so">
-        <!-- <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_gpu_laser.so"> -->
-          <topicName>${topic}</topicName>
+          <topicName>${topic}/points</topicName>
           <frameName>${name}</frameName>
-          <!-- <min_range>${min_range}</min_range>
-          <max_range>${max_range}</max_range>
-          <gaussianNoise>${noise}</gaussianNoise> -->
         </plugin>
       </sensor>
     </gazebo>

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:plot average_density="0.191567121735" average_height="0.0590563089379" plot_crossrange_index="1.143" plot_id="0" plot_range_index="1.143" rotation="0" row_count="4" row_length="12" row_width="0.762" x="1.143" y="1.143" z="0.0295281544689"/>
+  <xacro:plot average_density="0.39077406926" average_height="0.129988300123" plot_crossrange_index="33.048" plot_id="1" plot_range_index="46.572" rotation="0" row_count="4" row_length="12" row_width="0.762" x="6.0" y="19.524" z="0.0649941500615"/>
+  <xacro:plot average_density="0.173769085086" average_height="0.0554132503684" plot_crossrange_index="0.0" plot_id="2" plot_range_index="0.0" rotation="0" row_count="4" row_length="12" row_width="0.762" x="0.0" y="0.0" z="0.0277066251842"/>
+  <xacro:plot average_density="0.277548072242" average_height="0.0854407661295" plot_crossrange_index="2.0" plot_id="3" plot_range_index="3.0" rotation="0" row_count="4" row_length="12" row_width="0.762" x="0.0" y="1.0" z="0.0427203830648"/>
+</robot>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<robot name="sensor_gps" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sensor_gps_quad" xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
   	<xacro:macro name="sensor_gps_quad" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
 
@@ -23,7 +23,7 @@
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
 				</geometry>
 				<xacro:color_material color="${color}"/>
 			</visual>
@@ -47,7 +47,7 @@
 			<plugin name="${name}_controller" filename="libhector_gazebo_ros_gps.so">
 				<alwaysOn>1</alwaysOn>
 				<updateRate>${update_rate}</updateRate>
-				<bodyName>${name}_link</bodyName> <!-- must be the link of the gps device, not the base_link or base_footprint -->
+				<bodyName>${name}_link</bodyName>
 				<!-- <frameId>${name}_link</frameId> -->
 				<topicName>${name}</topicName>
 				<referenceLatitude>${ref_lat}</referenceLatitude>
@@ -60,9 +60,6 @@
 				<velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
 			</plugin>
 		</gazebo>
-
 	</xacro:macro>
-
-	<!--<xacro:include filename="$(find terrasentia_sensors)/config/dropouts.xml"/>-->
 
 </robot>

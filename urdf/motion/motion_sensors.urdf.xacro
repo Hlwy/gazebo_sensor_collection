@@ -4,18 +4,18 @@
                          	Misc
      ========================================================= -->
 	<!-- Imu -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_standard.urdf.xacro" />
 
 	<!-- Imu hector -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_hector_plugin.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_hector.urdf.xacro" />
 
 	<!-- Imu Terra -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_terra_plugin.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_mod.urdf.xacro" />
 
 	<!-- Imu for Arducopter -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/imu_quad_plugin.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_quad.urdf.xacro" />
 
 	<!-- Rotary Encoder -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/motion/encoder.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/encoder.urdf.xacro" />
 
 </robot>

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
+
      <xacro:macro name="sensor_encoder" params="ns:=/ parent joint:=front_left_wheel_rev d:=0.15 topic:=/encoder update_rate:=100.0 ppr:=150">
+
           <link name="${parent}_encoder_link">
 			<collision>
                     <origin rpy="-0.02 0.03 -0.02" xyz="0 0 0"/>
@@ -12,7 +14,7 @@
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0"/>
 				<geometry>
-					<mesh filename="package://terrasentia_sensors/meshes/rotary_encoder.dae"/>
+					<mesh filename="package://gazebo_sensor_collection/meshes/motion/rotary_encoder.dae"/>
 				</geometry>
 			</visual>
 
@@ -31,7 +33,7 @@
 
 
           <gazebo>
-               <plugin name="${parent}_encoder_plugin" filename="libterra_ros_encoder.so">
+               <plugin name="${parent}_encoder_plugin" filename="libgazebo_ros_encoder.so">
                     <robotNamespace>${ns}</robotNamespace>
                     <joint>${joint}</joint>
                     <wheelDiameter>${d}</wheelDiameter>

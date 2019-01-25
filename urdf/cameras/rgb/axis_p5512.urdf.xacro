@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="sensor_axis_p5512">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:property name="ptz_joint_effort_limit" value="100.0"/>
      <xacro:property name="ptz_joint_velocity_limit" value="100.0"/>
@@ -29,7 +29,7 @@
                     <!-- because the origin of the mesh file is not at the "center" of the model-->
                     <origin xyz="-0.3 0.0 -0.03" rpy="0 ${M_PI/2} 0"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/axis_p5512.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/axis/axis_p5512.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
@@ -37,7 +37,7 @@
                     <origin xyz="-0.3 0.0 -0.03" rpy="0 ${M_PI/2} 0"/>
                     <!-- because the origin of the mesh file is not at the "center" of the model-->
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/axis_p5512.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/axis/axis_p5512.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                </collision>
           </link>

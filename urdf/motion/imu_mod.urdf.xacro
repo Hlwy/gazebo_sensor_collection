@@ -1,17 +1,15 @@
 <?xml version="1.0"?>
-<robot name="sensor_imu_terra" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sensor_imu_modified" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-     <xacro:macro name="sensor_imu_quad" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
+     <xacro:macro name="sensor_modified_imu" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
 
-          <joint name="${name}_joint" type="revolute">
+          <joint name="${name}_joint" type="fixed">
                <axis xyz="1 0 0"/>
                <xacro:insert_block name="origin"/>
                <parent link="${parent}"/>
                <child link="${name}_link"/>
-               <dynamics damping="1.0"/>
-               <limit effort="0" velocity="0" lower="0" upper="0" />
           </joint>
 
           <link name="${name}_link">
@@ -41,19 +39,11 @@
 
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
-          <gazebo reference="${name}_link">
-               <sensor name="${name}_sensor" type="imu">
-                    <pose>0 0 0 3.14 0 0</pose>
-                    <always_on>1</always_on>
-                    <update_rate>1000.0</update_rate>
-               </sensor>
-          </gazebo>
-
           <gazebo>
-               <plugin name="${name}_controller" filename="libhector_gazebo_ros_imu.so">
+               <plugin name="${name}_controller" filename="libgazebo_ros_imu_mod.so">
                     <alwaysOn>true</alwaysOn>
-                    <topicName>${name}</topicName>
-				<!-- <topicNameCustom>/${name}/terra</topicNameCustom> -->
+                    <topicName>/${name}</topicName>
+				<topicNameCustom>/${name}/custom</topicNameCustom>
 
                     <serviceName>${name}/service</serviceName>
                     <bodyName>${name}_link</bodyName>

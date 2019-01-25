@@ -3,9 +3,9 @@
 	<!-- ====================================================
                          	Misc
      ========================================================= -->
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps.urdf.xacro" />
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps_quad.urdf.xacro" />
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps_with_mast.urdf.xacro" />
-	<xacro:include filename="$(find terrasentia_sensors)/urdf/gps/gps-with-periodicnoisebox.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_standard.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_quad.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_mast.urdf.xacro" />
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_dropout.urdf.xacro" />
 
 </robot>

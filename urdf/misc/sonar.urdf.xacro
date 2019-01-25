@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:macro name="sensor_sonar" params="name parent *origin ros_topic update_rate min_range max_range field_of_view ray_count color">
 
@@ -20,7 +20,7 @@
                <visual>
                     <origin xyz="0 0 0" rpy="0 0 0" />
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/max_sonar_ez4.dae"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/misc/max_sonar_ez4.dae"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>

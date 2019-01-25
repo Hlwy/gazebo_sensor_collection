@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="sensor_hokuyo3d" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:include filename="$(find terrasentia_sensors)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:macro name="sensor_hokuyo3d" params="name visualize:=false parent *origin color">
 
@@ -22,7 +22,7 @@
                <visual>
                     <origin xyz="0 0 0" rpy="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://terrasentia_sensors/meshes/hokuyo3d.stl"/>
+                         <mesh filename="package://gazebo_sensor_collection/meshes/lidars/hokuyo/hokuyo3d.stl"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
@@ -86,8 +86,7 @@
                          </noise>
                     </ray>
 
-                    <!-- <plugin name="${name}_controller" filename="libgazebo_ros_block_laser.so"> -->
-                    <plugin name="${name}_controller" filename="libterra_ros_3d_gpu_laser.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_gpu_laser.so">
                          <topicName>${name}/points</topicName>
                          <frameName>${name}_link</frameName>
                     </plugin>
