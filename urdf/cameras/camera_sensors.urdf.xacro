@@ -31,6 +31,8 @@
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/fotonic_e.urdf.xacro" />
 	<!-- Intel Realsense R200 -->
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_r200.urdf.xacro" />
+	<!-- Intel Realsense D415 -->
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_d415.urdf.xacro" />
 
 
 </robot>

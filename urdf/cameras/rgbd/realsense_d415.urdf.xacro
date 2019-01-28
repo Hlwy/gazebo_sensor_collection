@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="sensor_realsense_r200" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sensor_realsense_d415" xmlns:xacro="http://ros.org/wiki/xacro">
 
      <xacro:macro name="sensor_realsense_d415" params="prefix:='' parent *origin visualize:=false">
 

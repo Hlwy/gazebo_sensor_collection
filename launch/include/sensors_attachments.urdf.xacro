@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="sensor_suite" xmlns:xacro="http://ros.org/wiki/xacro">
-     
+
      <!-- ====================================================
           Include Sensor Database for Available Sensors
      ========================================================= -->
@@ -18,14 +18,16 @@
      <xacro:world/>
 
      <!-- LiDAR sensor_hokuyo_ust10lx -->
-     <xacro:sensor_hokuyo_ust10lx name="hokuyo" parent="world_link" color="black" visualize="true">
+     <!-- <xacro:sensor_hokuyo_ust10lx name="hokuyo" parent="world_link" color="black" visualize="true">
           <origin xyz="0.22 0 0.173" rpy="0 0 0"/>
-     </xacro:sensor_hokuyo_ust10lx>
+     </xacro:sensor_hokuyo_ust10lx> -->
 
-     <!-- LiDAR sensor_hokuyo_ust10lx -->
-     <xacro:sensor_realsense_r200 parent="world_link">
+     <!-- <xacro:sensor_realsense_r200 parent="world_link">
           <origin xyz="0.26 0 0.05" rpy="0 0 0" />
-     </xacro:sensor_realsense_r200>
+     </xacro:sensor_realsense_r200> -->
+     <xacro:sensor_realsense_d415 parent="world_link">
+          <origin xyz="0.26 0 0.05" rpy="0 0 0" />
+     </xacro:sensor_realsense_d415>
 
      <!-- IMU -->
      <xacro:sensor_modified_imu name="imu" parent="world_link" color="red"
