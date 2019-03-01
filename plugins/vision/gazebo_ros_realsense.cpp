@@ -1,36 +1,54 @@
 #include "vision/gazebo_ros_realsense.h"
 #include <sensor_msgs/fill_image.h>
 
-namespace
-{
+namespace{
   std::string extractCameraName(const std::string& name);
   sensor_msgs::CameraInfo cameraInfo(const sensor_msgs::Image& image, float horizontal_fov);
 }
 
-namespace gazebo
-{
+namespace gazebo{
 // Register the plugin
 GZ_REGISTER_MODEL_PLUGIN(GazeboRosRealsense)
 
-GazeboRosRealsense::GazeboRosRealsense()
-{
+GazeboRosRealsense::GazeboRosRealsense(){}
+
+GazeboRosRealsense::~GazeboRosRealsense(){
+     ROS_DEBUG_STREAM_NAMED("realsense_camera", "Unloaded");
 }
 
-GazeboRosRealsense::~GazeboRosRealsense()
-{
-  ROS_DEBUG_STREAM_NAMED("realsense_camera", "Unloaded");
-}
-
-void GazeboRosRealsense::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
-{
+void GazeboRosRealsense::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
   // Make sure the ROS node for Gazebo has already been initialized
-  if (!ros::isInitialized())
-  {
+  if (!ros::isInitialized()){
     ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
     return;
   }
   ROS_INFO("Realsense Gazebo ROS plugin loading.");
+
+  /*
+  ██   ██ ██    ██ ███    ██ ████████ ███████ ██████
+  ██   ██ ██    ██ ████   ██    ██    ██      ██   ██
+  ███████ ██    ██ ██ ██  ██    ██    █████   ██████
+  ██   ██ ██    ██ ██  ██ ██    ██    ██      ██   ██
+  ██   ██  ██████  ██   ████    ██    ███████ ██   ██
+  */
+
+  this->robot_namespace_ = "";
+  if (!_sdf->HasElement("robotNamespace")) {
+   ROS_INFO_NAMED("skid_steer_drive", "GazeboSkidSteerDriveWEncoder Plugin missing <robotNamespace>, defaults to \"%s\"",
+        this->robot_namespace_.c_str());
+  } else {
+   this->robot_namespace_ =
+      _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
+  }
+
+  /*
+  ██   ██ ██    ██ ███    ██ ████████ ███████ ██████
+  ██   ██ ██    ██ ████   ██    ██    ██      ██   ██
+  ███████ ██    ██ ██ ██  ██    ██    █████   ██████
+  ██   ██ ██    ██ ██  ██ ██    ██    ██      ██   ██
+  ██   ██  ██████  ██   ████    ██    ███████ ██   ██
+  */
 
   RealSensePlugin::Load(_model, _sdf);
 
@@ -48,9 +66,7 @@ void GazeboRosRealsense::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->depth_pub_ = this->itnode_->advertiseCamera("camera/depth/image_raw", 2);
 }
 
-void GazeboRosRealsense::OnNewFrame(const rendering::CameraPtr cam,
-                                    const transport::PublisherPtr pub)
-{
+void GazeboRosRealsense::OnNewFrame(const rendering::CameraPtr cam, const transport::PublisherPtr pub){
   common::Time current_time = this->world->GetSimTime();
 
   // identify camera
@@ -75,11 +91,9 @@ void GazeboRosRealsense::OnNewFrame(const rendering::CameraPtr cam,
   const auto pixel_format = supported_image_encodings.at(cam->ImageFormat());
 
   // copy from simulation image to ROS msg
-  fillImage(this->image_msg_,
-    pixel_format,
-    cam->ImageHeight(), cam->ImageWidth(),
-    cam->ImageDepth() * cam->ImageWidth(),
-    reinterpret_cast<const void*>(cam->ImageData()));
+  fillImage(this->image_msg_, pixel_format, cam->ImageHeight(), cam->ImageWidth(),
+     cam->ImageDepth() * cam->ImageWidth(),
+     reinterpret_cast<const void*>(cam->ImageData()));
 
   // identify camera rendering
   const std::map<std::string, rendering::CameraPtr> cameras = {
@@ -93,8 +107,7 @@ void GazeboRosRealsense::OnNewFrame(const rendering::CameraPtr cam,
   image_pub->publish(this->image_msg_, camera_info_msg);
 }
 
-void GazeboRosRealsense::OnNewDepthFrame()
-{
+void GazeboRosRealsense::OnNewDepthFrame(){
   // get current time
   common::Time current_time = this->world->GetSimTime();
 
@@ -109,8 +122,7 @@ void GazeboRosRealsense::OnNewDepthFrame()
   std::string pixel_format = sensor_msgs::image_encodings::TYPE_16UC1;
 
   // copy from simulation image to ROS msg
-  fillImage(this->depth_msg_,
-    pixel_format,
+  fillImage(this->depth_msg_, pixel_format,
     this->depthCam->ImageHeight(), this->depthCam->ImageWidth(),
     2 * this->depthCam->ImageWidth(),
     reinterpret_cast<const void*>(this->depthMap.data()));
@@ -122,10 +134,8 @@ void GazeboRosRealsense::OnNewDepthFrame()
 
 }
 
-namespace
-{
-  std::string extractCameraName(const std::string& name)
-  {
+namespace{
+  std::string extractCameraName(const std::string& name){
     if (name.find(COLOR_CAMERA_NAME) != std::string::npos) return COLOR_CAMERA_NAME;
     if (name.find(IRED1_CAMERA_NAME) != std::string::npos) return IRED1_CAMERA_NAME;
     if (name.find(IRED2_CAMERA_NAME) != std::string::npos) return IRED2_CAMERA_NAME;
@@ -134,8 +144,7 @@ namespace
     return COLOR_CAMERA_NAME;
   }
 
-  sensor_msgs::CameraInfo cameraInfo(const sensor_msgs::Image& image, float horizontal_fov)
-  {
+  sensor_msgs::CameraInfo cameraInfo(const sensor_msgs::Image& image, float horizontal_fov){
     sensor_msgs::CameraInfo info_msg;
 
     info_msg.header = image.header;

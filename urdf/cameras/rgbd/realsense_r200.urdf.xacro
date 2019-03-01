@@ -163,8 +163,8 @@
                          </clip>
                          <noise>
                               <type>gaussian</type>
-                              <mean>0.0</mean>
-                              <stddev>0.100</stddev>
+                              <mean>1.0</mean>
+                              <stddev>0.5</stddev>
                          </noise>
                     </camera>
                     <always_on>1</always_on>
