@@ -136,9 +136,6 @@ add_library(gazebo_ros_battery_simple plugins/misc/gazebo_ros_battery_simple.cpp
 target_link_libraries(gazebo_ros_battery_simple ${catkin_LIBRARIES})
 add_dependencies(gazebo_ros_battery_simple ${PROJECT_NAME}_generate_messages_cpp)
 
-add_library(gazebo_ros_realsense
-     plugins/vision/RealSensePlugin.cpp
-     plugins/vision/gazebo_ros_realsense.cpp
-)
+add_library(gazebo_ros_realsense plugins/vision/gazebo_ros_realsense.cpp)
 target_link_libraries(gazebo_ros_realsense ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(gazebo_ros_realsense ${catkin_EXPORTED_TARGETS})

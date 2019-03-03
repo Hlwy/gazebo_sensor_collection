@@ -67,15 +67,20 @@
           </joint>
 
           <!-- ====================================================
-          Gazebo
+                                   Gazebo
           ========================================================= -->
           <gazebo>
-               <plugin name="realsense_plugin" filename="libgazebo_ros_realsense.so"/>
+               <plugin name="realsense_plugin" filename="libgazebo_ros_realsense.so">
+                    <cameraName>r200</cameraName>
+                    <baseline>70</baseline>            <!-- in mm -->
+                    <depthNearClip>0.3</depthNearClip> <!-- in m -->
+                    <depthFarClip>10.0</depthFarClip>  <!-- in m -->
+                    <depthScale>0.001</depthScale>
+               </plugin>
           </gazebo>
 
           <!-- Load parameters to model's main link-->
           <gazebo reference="${prefix}r200_camera">
-
                <!-- ================== Color Camera =================== -->
                <sensor name="color" type="camera">
                     <pose frame="">0 -0.046 0.004 0 0 0</pose>
@@ -104,7 +109,7 @@
                <sensor name="ired1" type="camera">
                     <pose frame="">0 -0.06 0.004 0 0 0</pose>
                     <camera name="__default__">
-                         <horizontal_fov>1.047</horizontal_fov>
+                         <horizontal_fov>1.02974</horizontal_fov>
                          <image>
                               <width>640</width>
                               <height>480</height>
@@ -128,7 +133,7 @@
                <sensor name="ired2" type="camera">
                     <pose frame="">0 0.01 0.004 0 0 0</pose>
                     <camera name="__default__">
-                         <horizontal_fov>1.047</horizontal_fov>
+                         <horizontal_fov>1.02974</horizontal_fov>
                          <image>
                               <width>640</width>
                               <height>480</height>
@@ -152,7 +157,7 @@
                <sensor name="depth" type="depth">
                     <pose frame="">0 -0.03 0.004 0 0 0</pose>
                     <camera name="__default__">
-                         <horizontal_fov>1.047</horizontal_fov>
+                         <horizontal_fov>1.02974</horizontal_fov>
                          <image>
                               <width>640</width>
                               <height>480</height>
