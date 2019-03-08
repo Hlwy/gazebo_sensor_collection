@@ -339,7 +339,7 @@ void GazeboRosRealsense::OnNewDepthFrame(){
           if(depthDataFloat[i] < this->depth_near_clip || depthDataFloat[i] < 0){
                this->depthMap[i] = 0;
           }else if(depthDataFloat[i] > this->depth_far_clip || depthDataFloat[i] > this->depth_scale * UINT16_MAX){
-               this->depthMap[i] = (uint16_t)(UINT16_MAX / this->depth_scale);
+               this->depthMap[i] = (uint16_t)(UINT16_MAX);
           }else{
                this->depthMap[i] = (uint16_t)(depthDataFloat[i] / this->depth_scale);
           }
