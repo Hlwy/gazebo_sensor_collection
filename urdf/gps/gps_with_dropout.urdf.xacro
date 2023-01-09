@@ -76,8 +76,8 @@
 
 		<gazebo>
 			<plugin name="${name}_controller" filename="libgazebo_ros_gps_with_dropout.so">
-				<xacro:include filename="$(find gazebo_sensor_collection)/config/gps/custom_gps_behavior.geofence"/>
-				<xacro:include filename="$(find gazebo_sensor_collection)/config/gps/plots.xacro"/>
+                    <xacro:include filename="$(find gazebo_sensor_collection)/config/gps/custom_gps_behavior.geofence"/>
+                    <xacro:include filename="$(find gazebo_sensor_collection)/config/gps/plots.xacro"/>
 				<alwaysOn>1</alwaysOn>
 				<updateRate>${update_rate}</updateRate>
 				<bodyName>${name}_link</bodyName>

@@ -1,0 +1,151 @@
+<?xml version="1.0" ?>
+<robot name="sensor_suite" xmlns:xacro="http://ros.org/wiki/xacro">
+
+     <!-- ====================================================
+          Include Sensor Database for Available Sensors
+     ========================================================= -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/all_sensors.urdf.xacro" />
+
+     <xacro:macro name="world" params="">
+          <link name="world_link"/>
+          <gazebo reference="world_link">
+               <static>true</static>
+          </gazebo>
+     </xacro:macro>
+     <xacro:macro name="base" params="name idx parent:=world_link">
+          <link name="base_${name}"/>
+          <joint name="base_${name}_world_joint" type="fixed" >
+            <origin xyz="0 ${idx} 0" rpy="0 0 0" />
+            <parent link="${parent}" />
+            <child link="base_${name}"/>
+          </joint>
+          <gazebo reference="base_${name}">
+               <static>true</static>
+          </gazebo>
+     </xacro:macro>
+     <!-- ====================================================
+                    Attach and Configure Sensors
+     ========================================================= -->
+     <xacro:world/>
+
+     <!-- <xacro:base name="hokuyo_urg04lx" idx="0"/>
+     <xacro:sensor_hokuyo_urg04lx name="hokuyo1" parent="base_hokuyo_urg04lx" color="black" visualize="false">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo_urg04lx> -->
+
+     <!-- <xacro:base name="hokuyo_utm30lx" idx="1"/>
+     <xacro:sensor_hokuyo_utm30lx name="hokuyo2" parent="base_hokuyo_utm30lx" color="black" visualize="false">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo_utm30lx> -->
+
+     <!-- <xacro:base name="hokuyo_ust10lx" idx="0"/>
+     <xacro:sensor_hokuyo_ust10lx name="hokuyo3" parent="base_hokuyo_ust10lx" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo_ust10lx> -->
+
+     <!-- <xacro:base name="hokuyo3d" idx="3"/> -->
+     <!-- <xacro:base name="hokuyo3d" idx="0"/>
+     <xacro:sensor_hokuyo3d name="hokuyo4" parent="base_hokuyo3d" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo3d> -->
+
+     <!-- <xacro:base name="sick_s3000" idx="4"/> -->
+     <!-- <xacro:base name="sick_s3000" idx="0"/>
+     <xacro:sensor_sick_s3000 name="sick" parent="base_sick_s3000" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_s3000> -->
+
+     <!-- <xacro:base name="sick_s300" idx="5"/> -->
+     <!-- <xacro:base name="sick_s300" idx="0"/>
+     <xacro:sensor_sick_s300 name="sick" parent="base_sick_s300" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_s300> -->
+
+     <!-- <xacro:base name="sick_tim571" idx="6"/> -->
+     <!-- <xacro:base name="sick_tim571" idx="0"/>
+     <xacro:sensor_sick_tim571 name="sick" parent="base_sick_tim571" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_tim571> -->
+
+     <!-- <xacro:base name="rplidar" idx="7"/> -->
+     <!-- <xacro:base name="rplidar" idx="0"/>
+     <xacro:sensor_rplidar name="rplidar" parent="base_rplidar" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_rplidar> -->
+
+     <!-- <xacro:base name="vlp_16" idx="8"/> -->
+     <!-- <xacro:base name="vlp_16" idx="0"/>
+     <xacro:sensor_vlp_16 name="vlp" parent="base_vlp_16" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_vlp_16> -->
+
+     <!-- <xacro:base name="hdl_32e" idx="9"/> -->
+     <xacro:base name="hdl_32e" idx="0"/>
+     <xacro:sensor_hdl_32e name="hdl" parent="base_hdl_32e" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hdl_32e>
+
+
+     <!-- LiDAR sensor_hokuyo_ust10lx -->
+     <!-- <xacro:sensor_hokuyo_ust10lx name="hokuyo" parent="world_link" color="black" visualize="true">
+          <origin xyz="0.22 0 0.173" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo_ust10lx> -->
+
+     <!-- <xacro:sensor_realsense_r200 parent="world_link">
+          <origin xyz="0.26 0 0.05" rpy="0 0 0" />
+     </xacro:sensor_realsense_r200> -->
+     <!-- <xacro:sensor_realsense_d415 parent="world_link">
+          <origin xyz="0.26 0 0.05" rpy="0 0 0" />
+     </xacro:sensor_realsense_d415> -->
+
+     <!-- <xacro:sensor_realsense_d415 cam_name="camera" parent="world_link" color="purple">
+          <origin xyz="0 0 0.1" rpy="0 0 0"/>
+     </xacro:sensor_realsense_d415> -->
+
+     <!-- IMU -->
+     <!-- <xacro:sensor_modified_imu name="imu" parent="world_link" color="red"
+                    update_rate="50.0"
+                    noise="0.005"
+                    yaw_offset="0.0"
+                    yaw_drift="0.02"
+                    yaw_noise="0.01"
+                    rate_offset="0.0 0.0 0.0"
+                    rate_drift="0.002 0.002 0.002"
+                    rate_noise="0.001 0.001 0.001"
+                    accel_offset="0.0 0.0 0.0"
+                    accel_drift="0.005 0.005 0.005"
+                    accel_noise="0.005 0.005 0.005">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_modified_imu> -->
+     <!-- <xacro:sensor_imu_hector name="imu" parent="world_link" color="red"
+                    update_rate="50.0"
+                    noise="0.005"
+                    yaw_offset="0.0"
+                    yaw_drift="0.02"
+                    yaw_noise="0.01"
+                    rate_offset="0.0 0.0 0.0"
+                    rate_drift="0.002 0.002 0.002"
+                    rate_noise="0.001 0.001 0.001"
+                    accel_offset="0.0 0.0 0.0"
+                    accel_drift="0.005 0.005 0.005"
+                    accel_noise="0.005 0.005 0.005">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_imu_hector> -->
+
+     <!-- GPS w/ Variable Dropouts-->
+     <!-- <xacro:sensor_gps_with_dropout name="gps" parent="world_link" color="white"
+                    ref_lat="40.1021496545"
+                    ref_long="-88.2267974168"
+                    ref_head="90.0"
+                    update_rate="10.0"
+                    drift="0.0"
+                    noise="0.001"
+                    vel_drift="0.00001"
+                    vel_noise="0.00001">
+          <origin xyz="-0.14 0 0.12" rpy="0 0 0"/>
+     </xacro:sensor_gps_with_dropout> -->
+
+     <!-- Simple Simulated Battery -->
+     <!-- <xacro:sensor_battery_approx/> -->
+
+</robot>

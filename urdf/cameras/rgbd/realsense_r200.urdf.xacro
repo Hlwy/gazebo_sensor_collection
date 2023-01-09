@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="sensor_realsense_r200" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:macro name="sensor_realsense_r200" params="prefix:='' parent *origin visualize:=false">
+     <xacro:macro name="sensor_realsense_r200" params="name:='' prefix:='' parent *origin visualize:=false">
           <!-- Camera link -->
           <link name="${prefix}r200_camera">
                <visual>

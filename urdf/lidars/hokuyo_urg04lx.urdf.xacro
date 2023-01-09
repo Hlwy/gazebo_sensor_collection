@@ -35,8 +35,47 @@
 		</link>
 
 		<!-- Hokuyo sensor for simulation -->
-		<sensor_hokuyo_urg_gazebo/>
 		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+          <!-- <sensor_hokuyo_urg_gazebo/> -->
+
+          <gazebo reference="${name}_link">
+			<sensor type="gpu_ray" name="${name}_sensor">
+				<pose>0 0 0 0 0 0</pose>
+				<visualize>${visualize}</visualize>
+				<update_rate>10</update_rate>
+
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>640</samples>
+							<resolution>1</resolution>
+							<min_angle>${min_angle}</min_angle>
+							<max_angle>${max_angle}</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.02</min>
+						<max>4.0</max>
+						<resolution>0.00628318531</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.01</stddev>
+					</noise>
+				</ray>
+
+				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_link</frame_name> -->
+				</plugin>
+			</sensor>
+		</gazebo>
+
 
 	</xacro:macro>
 
@@ -72,9 +111,13 @@
 					</noise>
 				</ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_gpu_laser.so">
-					<topicName>${name}/scan</topicName>
-					<frameName>${name}_link</frameName>
+				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}/</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_link</frame_name> -->
 				</plugin>
 			</sensor>
 		</gazebo>

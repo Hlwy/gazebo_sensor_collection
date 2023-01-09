@@ -1,59 +1,40 @@
-/*
- * Copyright (c) 2010, Daniel Hewlett, Antons Rebguns
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions are met:
- *      * Redistributions of source code must retain the above copyright
- *      notice, this list of conditions and the following disclaimer.
- *      * Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in the
- *      documentation and/or other materials provided with the distribution.
- *      * Neither the name of the <organization> nor the
- *      names of its contributors may be used to endorse or promote products
- *      derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY Antons Rebguns <email> ''AS IS'' AND ANY
- *  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *  DISCLAIMED. IN NO EVENT SHALL Antons Rebguns <email> BE LIABLE FOR ANY
- *  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- **/
+// #include <algorithm>
+// #include <assert.h>
 
-/*
- * \file  gazebo_ros_skid_steer_drive.cpp
- *
- * \brief A skid steering drive plugin. Inspired by gazebo_ros_diff_drive and SkidSteerDrivePlugin
- *
- * \author  Zdenek Materna (imaterna@fit.vutbr.cz)
- *
- * $ Id: 06/25/2013 11:23:40 AM materna $
- */
+#include "gazebo_sensor_collection/motion/skid_steering_with_encoder.h"
+
+// #include <ignition/math/Pose3.hh>
+// #include <ignition/math/Vector3.hh>
+
+// #include <gazebo/common/Time.hh>
+// #include <gazebo/physics/Joint.hh>
+// #include <gazebo/physics/Link.hh>
+// #include <gazebo/physics/Model.hh>
+// #include <gazebo/physics/World.hh>
+// #include <gazebo_ros/conversions/builtin_interfaces.hpp>
+// #include <gazebo_ros/conversions/geometry_msgs.hpp>
+// #include <gazebo_ros/node.hpp>
+// #include <geometry_msgs/msg/pose2_d.hpp>
+// #include <geometry_msgs/msg/twist.hpp>
+// #include <nav_msgs/msg/odometry.hpp>
+// #include <sdf/sdf.hh>
 
 
-#include <algorithm>
-#include <assert.h>
+// // #include <ros/ros.h>
+// // #include <tf/transform_broadcaster.h>
+// // #include <tf/transform_listener.h>
+// #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+// #include <tf2_ros/transform_broadcaster.h>
+// #include <tf2_ros/transform_listener.h>
+// // #include <geometry_msgs/Twist.h>
+// // #include <nav_msgs/GetMap.h>
+// // #include <nav_msgs/Odometry.h>
+// // #include <boost/bind.hpp>
+// // #include <boost/thread/mutex.hpp>
 
-#include "../include/motion/skid_steering_with_encoder.h"
-
-#include <ignition/math/Pose3.hh>
-#include <ignition/math/Vector3.hh>
-#include <sdf/sdf.hh>
-
-#include <ros/ros.h>
-#include <tf/transform_broadcaster.h>
-#include <tf/transform_listener.h>
-#include <geometry_msgs/Twist.h>
-#include <nav_msgs/GetMap.h>
-#include <nav_msgs/Odometry.h>
-#include <boost/bind.hpp>
-#include <boost/thread/mutex.hpp>
+// #include <memory>
+// #include <string>
+// #include <vector>
 
 namespace gazebo {
 
@@ -245,7 +226,12 @@ namespace gazebo {
     } else {
       this->update_period_ = 0.0;
     }
-    last_update_time_ = this->world->GetSimTime();
+
+#if GAZEBO_MAJOR_VERSION < 9
+     last_update_time_ = this->world->GetSimTime();
+#else
+     last_update_time_ = this->world->SimTime();
+#endif
 
     // Initialize velocity stuff
     wheel_speed_[RIGHT_FRONT] = 0;
@@ -337,8 +323,8 @@ namespace gazebo {
 
     ROS_INFO_NAMED("skid_steer_drive", "Starting GazeboSkidSteerDriveWEncoder Plugin (ns = %s)", this->robot_namespace_.c_str());
 
-    tf_prefix_ = tf::getPrefixParam(*rosnode_);
-    transform_broadcaster_ = new tf::TransformBroadcaster();
+    tf_prefix_ = tf2::getPrefixParam(*rosnode_);
+    transform_broadcaster_ = new tf2::TransformBroadcaster();
 
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
     ros::SubscribeOptions so =
@@ -366,190 +352,182 @@ namespace gazebo {
 
   }
 
-  // Update the controller
-  void GazeboSkidSteerDriveWEncoder::UpdateChild() {
-    common::Time current_time = this->world->GetSimTime();
-    double posi[4];
-    double angul[4];
+     // Update the controller
+     void GazeboSkidSteerDriveWEncoder::UpdateChild() {
+          double posi[4];
+          double angul[4];
+          double radius = this->wheel_diameter_ / 2.0;
+          common::Time current_time;
 
-    double seconds_since_last_update = (current_time - last_update_time_).Double();
-    double radius = this->wheel_diameter_ / 2.0;
+          #if GAZEBO_MAJOR_VERSION < 9
+          current_time = this->world->GetSimTime();
+          #else
+          current_time = this->world->SimTime();
+          #endif
+          double seconds_since_last_update = (current_time - last_update_time_).Double();
 
-    if (seconds_since_last_update > update_period_){
-      ros::Time current_ros_time = ros::Time::now();
+          if(seconds_since_last_update > update_period_){
+               ros::Time current_ros_time = ros::Time::now();
 
-      posi[0] = joints[RIGHT_FRONT]->GetAngle(0).Radian();
-      posi[1] = joints[LEFT_FRONT]->GetAngle(0).Radian();
-      posi[2] = joints[RIGHT_REAR]->GetAngle(0).Radian();
-      posi[3] = joints[LEFT_REAR]->GetAngle(0).Radian();
+               #if GAZEBO_MAJOR_VERSION < 9
+               posi[0] = joints[RIGHT_FRONT]->GetAngle(0).Radian();
+               posi[1] = joints[LEFT_FRONT]->GetAngle(0).Radian();
+               posi[2] = joints[RIGHT_REAR]->GetAngle(0).Radian();
+               posi[3] = joints[LEFT_REAR]->GetAngle(0).Radian();
+               #else
+               posi[0] = joints[RIGHT_FRONT]->Position(0);
+               posi[1] = joints[LEFT_FRONT]->Position(0);
+               posi[2] = joints[RIGHT_REAR]->Position(0);
+               posi[3] = joints[LEFT_REAR]->Position(0);
+               #endif
 
-      angul[0] = joints[RIGHT_FRONT]->GetVelocity(0);
-      angul[1] = joints[LEFT_FRONT]->GetVelocity(0);
-      angul[2] = joints[RIGHT_REAR]->GetVelocity(0);
-      angul[3] = joints[LEFT_REAR]->GetVelocity(0);
+               angul[0] = joints[RIGHT_FRONT]->GetVelocity(0);
+               angul[1] = joints[LEFT_FRONT]->GetVelocity(0);
+               angul[2] = joints[RIGHT_REAR]->GetVelocity(0);
+               angul[3] = joints[LEFT_REAR]->GetVelocity(0);
 
-      enc_fr.stamp = current_ros_time;
-      enc_fl.stamp = current_ros_time;
-      enc_rr.stamp = current_ros_time;
-      enc_rl.stamp = current_ros_time;
+               enc_fr.stamp = current_ros_time; enc_fl.stamp = current_ros_time;
+               enc_rr.stamp = current_ros_time; enc_rl.stamp = current_ros_time;
 
-      enc_fr.id = 0;
-      enc_fl.id = 1;
-      enc_rr.id = 2;
-      enc_rl.id = 3;
+               enc_fr.id = 0; enc_fl.id = 1; enc_rr.id = 2; enc_rl.id = 3;
+               enc_fr.position = posi[0];
+               enc_fl.position = posi[1];
+               enc_rr.position = posi[2];
+               enc_rl.position = posi[3];
 
-      enc_fr.position = posi[0];
-      enc_fl.position = posi[1];
-      enc_rr.position = posi[2];
-      enc_rl.position = posi[3];
+               enc_fr.speed = angul[0]*radius;
+               enc_fl.speed = angul[1]*radius;
+               enc_rr.speed = angul[2]*radius;
+               enc_rl.speed = angul[3]*radius;
 
-      enc_fr.speed = angul[0]*radius;
-      enc_fl.speed = angul[1]*radius;
-      enc_rr.speed = angul[2]*radius;
-      enc_rl.speed = angul[3]*radius;
+               enc_fr.qpps = angul[0] * c_ppr_;
+               enc_fl.qpps = angul[1] * c_ppr_;
+               enc_rr.qpps = angul[2] * c_ppr_;
+               enc_rl.qpps = angul[3] * c_ppr_;
 
-      enc_fr.qpps = angul[0] * c_ppr_;
-      enc_fl.qpps = angul[1] * c_ppr_;
-      enc_rr.qpps = angul[2] * c_ppr_;
-      enc_rl.qpps = angul[3] * c_ppr_;
+               // ROS_INFO_NAMED("skid_steer_drive", "Wheel Speeds [rad/s]: %.4f, %.4f, %.4f, %.4f", angul[0],angul[1],angul[2],angul[3]);
+               // ROS_INFO_NAMED("skid_steer_drive", "Wheel Positions [radians]: %.4f, %.4f, %.4f, %.4f", posi[0],posi[1],posi[2],posi[3]);
 
-      // ROS_INFO_NAMED("skid_steer_drive", "Wheel Speeds [rad/s]: %.4f, %.4f, %.4f, %.4f", angul[0],angul[1],angul[2],angul[3]);
-      // ROS_INFO_NAMED("skid_steer_drive", "Wheel Positions [radians]: %.4f, %.4f, %.4f, %.4f", posi[0],posi[1],posi[2],posi[3]);
+               enc_fr_publisher_.publish(enc_fr);
+               enc_fl_publisher_.publish(enc_fl);
+               enc_rr_publisher_.publish(enc_rr);
+               enc_rl_publisher_.publish(enc_rl);
 
-      enc_fr_publisher_.publish(enc_fr);
-      enc_fl_publisher_.publish(enc_fl);
-      enc_rr_publisher_.publish(enc_rr);
-      enc_rl_publisher_.publish(enc_rl);
+               publishOdometry(seconds_since_last_update);
+               // Update robot in case new velocities have been requested
+               getWheelVelocities();
 
-      publishOdometry(seconds_since_last_update);
+               #if GAZEBO_MAJOR_VERSION > 2
+               joints[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
+               joints[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
+               joints[LEFT_REAR]->SetParam("vel", 0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
+               joints[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
+               #else
+               joints[LEFT_FRONT]->SetVelocity(0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
+               joints[RIGHT_FRONT]->SetVelocity(0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
+               joints[LEFT_REAR]->SetVelocity(0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
+               joints[RIGHT_REAR]->SetVelocity(0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
+               #endif
 
-      // Update robot in case new velocities have been requested
-      getWheelVelocities();
-#if GAZEBO_MAJOR_VERSION > 2
-      joints[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
-      joints[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
-      joints[LEFT_REAR]->SetParam("vel", 0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
-      joints[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
-#else
-      joints[LEFT_FRONT]->SetVelocity(0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
-      joints[RIGHT_FRONT]->SetVelocity(0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
-      joints[LEFT_REAR]->SetVelocity(0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
-      joints[RIGHT_REAR]->SetVelocity(0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
-#endif
+               last_update_time_+= common::Time(update_period_);
+          }
+     }
 
-      last_update_time_+= common::Time(update_period_);
+     // Finalize the controller
+     void GazeboSkidSteerDriveWEncoder::FiniChild() {
+          alive_ = false;
+          queue_.clear();
+          queue_.disable();
+          rosnode_->shutdown();
+          callback_queue_thread_.join();
+     }
 
-    }
-  }
+     void GazeboSkidSteerDriveWEncoder::getWheelVelocities() {
+          boost::mutex::scoped_lock scoped_lock(lock);
+          double vr = x_;
+          double va = rot_;
 
-  // Finalize the controller
-  void GazeboSkidSteerDriveWEncoder::FiniChild() {
-    alive_ = false;
-    queue_.clear();
-    queue_.disable();
-    rosnode_->shutdown();
-    callback_queue_thread_.join();
-  }
+          wheel_speed_[RIGHT_FRONT] = vr + va * wheel_separation_ / 2.0;
+          wheel_speed_[RIGHT_REAR] = vr + va * wheel_separation_ / 2.0;
+          wheel_speed_[LEFT_FRONT] = vr - va * wheel_separation_ / 2.0;
+          wheel_speed_[LEFT_REAR] = vr - va * wheel_separation_ / 2.0;
+     }
+     void GazeboSkidSteerDriveWEncoder::cmdVelCallback(const geometry_msgs::Twist::ConstPtr& cmd_msg){
+          boost::mutex::scoped_lock scoped_lock(lock);
+          x_ = cmd_msg->linear.x;
+          rot_ = cmd_msg->angular.z;
+     }
 
-  void GazeboSkidSteerDriveWEncoder::getWheelVelocities() {
-    boost::mutex::scoped_lock scoped_lock(lock);
+     void GazeboSkidSteerDriveWEncoder::QueueThread(){
+          static const double timeout = 0.01;
+          while (alive_ && rosnode_->ok()) { queue_.callAvailable(ros::WallDuration(timeout)); }
+     }
 
-    double vr = x_;
-    double va = rot_;
+     void GazeboSkidSteerDriveWEncoder::publishOdometry(double step_time){
+          ros::Time current_time = ros::Time::now();
+          std::string odom_frame = tf2::resolve(tf_prefix_, odometry_frame_);
+          std::string base_footprint_frame = tf2::resolve(tf_prefix_, robot_base_frame_);
 
-    wheel_speed_[RIGHT_FRONT] = vr + va * wheel_separation_ / 2.0;
-    wheel_speed_[RIGHT_REAR] = vr + va * wheel_separation_ / 2.0;
+          // TODO create some non-perfect odometry!
+          // getting data for base_footprint to odom transform
+          #if GAZEBO_MAJOR_VERSION >= 8
+          ignition::math::Pose3d pose = this->parent->WorldPose();
+          #else
+          ignition::math::Pose3d pose = this->parent->GetWorldPose().Ign();
+          #endif
 
-    wheel_speed_[LEFT_FRONT] = vr - va * wheel_separation_ / 2.0;
-    wheel_speed_[LEFT_REAR] = vr - va * wheel_separation_ / 2.0;
+          tf2::Quaternion qt(pose.Rot().X(), pose.Rot().Y(), pose.Rot().Z(), pose.Rot().W());
+          tf2::Vector3 vt(pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z());
 
-  }
+          tf2::Transform base_footprint_to_odom(qt, vt);
+          if(this->broadcast_tf_){
+               transform_broadcaster_->sendTransform(
+                    tf2::StampedTransform(base_footprint_to_odom, current_time, odom_frame, base_footprint_frame)
+               );
+          }
 
-  void GazeboSkidSteerDriveWEncoder::cmdVelCallback(
-      const geometry_msgs::Twist::ConstPtr& cmd_msg) {
+          // publish odom topic
+          odom_.pose.pose.position.x = pose.Pos().X();
+          odom_.pose.pose.position.y = pose.Pos().Y();
 
-    boost::mutex::scoped_lock scoped_lock(lock);
-    x_ = cmd_msg->linear.x;
-    rot_ = cmd_msg->angular.z;
-  }
+          odom_.pose.pose.orientation.x = pose.Rot().X();
+          odom_.pose.pose.orientation.y = pose.Rot().Y();
+          odom_.pose.pose.orientation.z = pose.Rot().Z();
+          odom_.pose.pose.orientation.w = pose.Rot().W();
+          odom_.pose.covariance[0] = this->covariance_x_;
+          odom_.pose.covariance[7] = this->covariance_y_;
+          odom_.pose.covariance[14] = 1000000000000.0;
+          odom_.pose.covariance[21] = 1000000000000.0;
+          odom_.pose.covariance[28] = 1000000000000.0;
+          odom_.pose.covariance[35] = this->covariance_yaw_;
 
-  void GazeboSkidSteerDriveWEncoder::QueueThread() {
-    static const double timeout = 0.01;
+          // get velocity in /odom frame
+          ignition::math::Vector3d linear;
+          #if GAZEBO_MAJOR_VERSION >= 8
+          linear = this->parent->WorldLinearVel();
+          odom_.twist.twist.angular.z = this->parent->WorldAngularVel().Z();
+          #else
+          linear = this->parent->GetWorldLinearVel().Ign();
+          odom_.twist.twist.angular.z = this->parent->GetWorldAngularVel().Ign().Z();
+          #endif
 
-    while (alive_ && rosnode_->ok()) {
-      queue_.callAvailable(ros::WallDuration(timeout));
-    }
-  }
+          // convert velocity to child_frame_id (aka base_footprint)
+          float yaw = pose.Rot().Yaw();
+          odom_.twist.twist.linear.x = cosf(yaw) * linear.X() + sinf(yaw) * linear.Y();
+          odom_.twist.twist.linear.y = cosf(yaw) * linear.Y() - sinf(yaw) * linear.X();
+          odom_.twist.covariance[0] = this->covariance_x_;
+          odom_.twist.covariance[7] = this->covariance_y_;
+          odom_.twist.covariance[14] = 1000000000000.0;
+          odom_.twist.covariance[21] = 1000000000000.0;
+          odom_.twist.covariance[28] = 1000000000000.0;
+          odom_.twist.covariance[35] = this->covariance_yaw_;
 
-  void GazeboSkidSteerDriveWEncoder::publishOdometry(double step_time) {
-    ros::Time current_time = ros::Time::now();
-    std::string odom_frame =
-      tf::resolve(tf_prefix_, odometry_frame_);
-    std::string base_footprint_frame =
-      tf::resolve(tf_prefix_, robot_base_frame_);
+          odom_.header.stamp = current_time;
+          odom_.header.frame_id = odom_frame;
+          odom_.child_frame_id = base_footprint_frame;
 
-    // TODO create some non-perfect odometry!
-    // getting data for base_footprint to odom transform
-#if GAZEBO_MAJOR_VERSION >= 8
-    ignition::math::Pose3d pose = this->parent->WorldPose();
-#else
-    ignition::math::Pose3d pose = this->parent->GetWorldPose().Ign();
-#endif
+          odometry_publisher_.publish(odom_);
+     }
 
-    tf::Quaternion qt(pose.Rot().X(), pose.Rot().Y(), pose.Rot().Z(), pose.Rot().W());
-    tf::Vector3 vt(pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z());
-
-    tf::Transform base_footprint_to_odom(qt, vt);
-    if (this->broadcast_tf_) {
-
-    	transform_broadcaster_->sendTransform(
-        tf::StampedTransform(base_footprint_to_odom, current_time,
-            odom_frame, base_footprint_frame));
-
-    }
-
-    // publish odom topic
-    odom_.pose.pose.position.x = pose.Pos().X();
-    odom_.pose.pose.position.y = pose.Pos().Y();
-
-    odom_.pose.pose.orientation.x = pose.Rot().X();
-    odom_.pose.pose.orientation.y = pose.Rot().Y();
-    odom_.pose.pose.orientation.z = pose.Rot().Z();
-    odom_.pose.pose.orientation.w = pose.Rot().W();
-    odom_.pose.covariance[0] = this->covariance_x_;
-    odom_.pose.covariance[7] = this->covariance_y_;
-    odom_.pose.covariance[14] = 1000000000000.0;
-    odom_.pose.covariance[21] = 1000000000000.0;
-    odom_.pose.covariance[28] = 1000000000000.0;
-    odom_.pose.covariance[35] = this->covariance_yaw_;
-
-    // get velocity in /odom frame
-    ignition::math::Vector3d linear;
-#if GAZEBO_MAJOR_VERSION >= 8
-    linear = this->parent->WorldLinearVel();
-    odom_.twist.twist.angular.z = this->parent->WorldAngularVel().Z();
-#else
-    linear = this->parent->GetWorldLinearVel().Ign();
-    odom_.twist.twist.angular.z = this->parent->GetWorldAngularVel().Ign().Z();
-#endif
-
-    // convert velocity to child_frame_id (aka base_footprint)
-    float yaw = pose.Rot().Yaw();
-    odom_.twist.twist.linear.x = cosf(yaw) * linear.X() + sinf(yaw) * linear.Y();
-    odom_.twist.twist.linear.y = cosf(yaw) * linear.Y() - sinf(yaw) * linear.X();
-    odom_.twist.covariance[0] = this->covariance_x_;
-    odom_.twist.covariance[7] = this->covariance_y_;
-    odom_.twist.covariance[14] = 1000000000000.0;
-    odom_.twist.covariance[21] = 1000000000000.0;
-    odom_.twist.covariance[28] = 1000000000000.0;
-    odom_.twist.covariance[35] = this->covariance_yaw_;
-
-    odom_.header.stamp = current_time;
-    odom_.header.frame_id = odom_frame;
-    odom_.child_frame_id = base_footprint_frame;
-
-    odometry_publisher_.publish(odom_);
-  }
-
-  GZ_REGISTER_MODEL_PLUGIN(GazeboSkidSteerDriveWEncoder)
+     GZ_REGISTER_MODEL_PLUGIN(GazeboSkidSteerDriveWEncoder)
 }

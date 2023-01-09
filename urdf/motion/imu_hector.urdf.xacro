@@ -40,7 +40,7 @@
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
           <gazebo>
-               <plugin name="${name}_controller" filename="libhector_gazebo_ros_imu.so">
+               <plugin name="${name}_controller" filename="libgazebo_ros_imu_hec_mod.so">
                     <alwaysOn>true</alwaysOn>
                     <topicName>/${name}</topicName>
                     <serviceName>${name}/service</serviceName>

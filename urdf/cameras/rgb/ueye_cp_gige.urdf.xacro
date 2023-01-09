@@ -3,7 +3,7 @@
 
      <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-     <xacro:macro name="sensor_ueye_cp_gige" params="name parent *origin color">
+     <xacro:macro name="sensor_ueye_cp_gige" params="name parent *origin color:='white'">
           <joint name="${name}_joint" type="fixed">
                <xacro:insert_block name="origin"/>
                <parent link="${parent}"/>
@@ -49,10 +49,10 @@
           <joint name="${name}_rgb_optical_joint" type="fixed">
                <origin xyz="0 0 0" rpy="1.5707 0 1.5707" />
                <parent link="${name}_rgb_frame"/>
-               <child link="${name}_rgb_optical_frame"/>
+               <child link="${name}_optical_frame"/>
           </joint>
 
-          <link name="${name}_rgb_optical_frame">
+          <link name="${name}_optical_frame">
                <inertial>
                     <mass value="0.001" />
                     <origin xyz="0 0 0" />
@@ -60,7 +60,7 @@
                </inertial>
           </link>
 
-          <sensor_ueye_cp_gige_gazebo />
+          <sensor_ueye_cp_gige_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>
@@ -69,10 +69,11 @@
                            Gazebo
      ========================================================= -->
 
-     <xacro:macro name="sensor_ueye_cp_gige_gazebo">
+     <xacro:macro name="sensor_ueye_cp_gige_gazebo" params="name">
           <gazebo reference="${name}_link">
                <sensor type="camera" name="${name}_sensor">
                     <update_rate>30.0</update_rate>
+                    <always_on>1</always_on>
 
                     <camera name="head">
                          <horizontal_fov>1.3962634</horizontal_fov>
@@ -90,20 +91,29 @@
                               <mean>0.0</mean>
                               <stddev>0.007</stddev>
                          </noise>
+                         <distortion>
+                              <k1>0.0</k1>
+                              <k2>0.0</k2>
+                              <k3>0.0</k3>
+                              <p1>0.0</p1>
+                              <p2>0.0</p2>
+                              <center>0.5 0.5</center>
+                         </distortion>
                     </camera>
 
                     <plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
-                         <alwaysOn>true</alwaysOn>
-                         <updateRate>0.0</updateRate>
-                         <cameraName>${name}</cameraName>
-                         <imageTopicName>image_raw</imageTopicName>
+                         <camera_name>${name}</camera_name>
+                         <!-- <imageTopicName>image_raw</imageTopicName>
                          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-                         <frameName>${name}_rgb_frame</frameName>
-                         <distortionK1>0.0</distortionK1>
-                         <distortionK2>0.0</distortionK2>
-                         <distortionK3>0.0</distortionK3>
-                         <distortionT1>0.0</distortionT1>
-                         <distortionT2>0.0</distortionT2>
+                         <frameName>${name}_optical_frame</frameName> -->
+                         <ros>
+                              <!-- <namespace>custom_ns</namespace> -->
+                              <remapping>image_raw:=image_raw</remapping>
+                              <remapping>camera_info:=camera_info</remapping>
+                         </ros>
+                         <frame_name>${name}_optical_frame</frame_name>
+
+                         <hack_baseline>0.07</hack_baseline>
                     </plugin>
                </sensor>
           </gazebo>

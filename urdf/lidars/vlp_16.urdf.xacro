@@ -84,12 +84,16 @@
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
-            <stddev>0.0</stddev>
+            <stddev>${noise}</stddev>
           </noise>
         </ray>
-        <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_gpu_laser.so">
-          <topicName>${topic}/points</topicName>
-          <frameName>${name}</frameName>
+        <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
+             <ros>
+                  <!-- <namespace>${name}/</namespace> -->
+                  <remapping>~/out:=${topic}</remapping>
+             </ros>
+             <!-- <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>${name}</frame_name> -->
         </plugin>
       </sensor>
     </gazebo>

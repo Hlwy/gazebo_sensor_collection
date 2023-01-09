@@ -3,7 +3,7 @@
 
      <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-     <xacro:macro name="sensor_imu_quad" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
+     <xacro:macro name="sensor_imu_quad" params="name parent *origin color update_rate prefix:='' noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
 
           <joint name="${name}_joint" type="revolute">
                <axis xyz="1 0 0"/>
@@ -50,9 +50,9 @@
           </gazebo>
 
           <gazebo>
-               <plugin name="${name}_controller" filename="libhector_gazebo_ros_imu.so">
+               <plugin name="${name}_controller" filename="libgazebo_ros_imu_hec_mod.so">
                     <alwaysOn>true</alwaysOn>
-                    <topicName>${name}</topicName>
+                    <topicName>${prefix}${name}/data</topicName>
 
                     <serviceName>${name}/service</serviceName>
                     <bodyName>${name}_link</bodyName>

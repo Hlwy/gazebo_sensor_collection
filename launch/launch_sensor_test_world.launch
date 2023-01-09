@@ -8,8 +8,9 @@
 
      <include file="$(find gazebo_ros)/launch/empty_world.launch">
           <arg name="headless" value="false"/>
-          <arg name="gui" value="true"/>
+          <arg name="gui" value="false"/>
           <arg name="verbose" value="true"/>
+          <arg name="paused" value="false"/>
      </include>
 
      <node name="spawn_sensors" pkg="gazebo_ros" type="spawn_model"
@@ -24,12 +25,12 @@
      </group>
 
 	<node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
-          <param name="publish_frequency" type="double" value="500.0"/>
+          <param name="publish_frequency" type="double" value="10.0"/>
 		<param name="robot_description" value="robot_description"/>
      </node>
 
      <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-		<param name="rate" type="double" value="500.0"/>
+		<param name="rate" type="double" value="10.0"/>
 	</node>
 
 	<node name="rqt" pkg="rqt_gui" type="rqt_gui"/>

@@ -44,7 +44,7 @@
 		</gazebo>
 
 		<gazebo>
-			<plugin name="${name}_controller" filename="libhector_gazebo_ros_gps.so">
+			<plugin name="${name}_controller" filename="libgazebo_ros_gps_hec_mod.so">
 				<alwaysOn>1</alwaysOn>
 				<updateRate>${update_rate}</updateRate>
 				<bodyName>${name}_link</bodyName>

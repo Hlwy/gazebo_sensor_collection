@@ -104,9 +104,14 @@ namespace gazebo {
           enc_.position = 0;
           enc_.speed = 0;
           enc_.qpps = 0;
-
           alive_ = true;
+
+#if GAZEBO_MAJOR_VERSION < 9
           last_update_time_ = this->world->GetSimTime();
+#else
+          last_update_time_ = this->world->SimTime();
+#endif
+
           c_ppr_ = ppr_ / (2*M_PI); // Conversion Factor
 
           // Make sure the ROS node for Gazebo has already been initialized
@@ -128,17 +133,26 @@ namespace gazebo {
 
      // Update the controller
      void GazeboRosEncoder::UpdateChild(){
+          common::Time current_time;
           double posi;
           double angul;
           double radius = this->wheel_diameter_ / 2.0;
 
-          common::Time current_time = this->world->GetSimTime();
-          double seconds_since_last_update = (current_time - last_update_time_).Double();
+#if GAZEBO_MAJOR_VERSION < 9
+          current_time = this->world->GetSimTime();
+#else
+          current_time = this->world->SimTime();
+#endif
 
+          double seconds_since_last_update = (current_time - last_update_time_).Double();
           if(seconds_since_last_update > update_period_){
                ros::Time current_ros_time = ros::Time::now();
 
+#if GAZEBO_MAJOR_VERSION < 9
                posi = joint_->GetAngle(0).Radian();
+#else
+               posi = joint_->Position(0);
+#endif
                angul = joint_->GetVelocity(0);
 
                enc_.stamp = current_ros_time;

@@ -1,7 +1,9 @@
 <?xml version="1.0" ?>
 <robot name="sensor_realsense_d415" xmlns:xacro="http://ros.org/wiki/xacro">
 
-     <xacro:macro name="sensor_realsense_d415" params="prefix:='' parent *origin visualize:=false">
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
+
+     <xacro:macro name="sensor_realsense_d415" params="name cam_fps:=30.0 cam_width:=848 cam_height:=480 prefix:='' min_depth:=0.1 max_depth:=30.0 parent *origin color:='white' visualize:=false">
 
           <!-- ============================================================
           -                         Includes
@@ -21,24 +23,26 @@
           <xacro:property name="d415_cam_depth_py" value="0.020"/>
           <xacro:property name="d415_cam_depth_pz" value="${d415_cam_height/2}"/>
 
-          <material name="aluminum">
+          <!-- <material name="aluminum">
                <color rgba="0.5 0.5 0.5 1"/>
-          </material>
+          </material> -->
 
           <!-- ============================================================
           -                        Physical Camera Link
           - =============================================================== -->
-          <link name="${prefix}d415_camera">
+          <link name="${prefix}${name}_link">
                <visual>
-                    <origin xyz="${d415_cam_mount_from_center_offset} ${-d415_cam_depth_py} 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+                    <!-- <origin xyz="${d415_cam_mount_from_center_offset} ${-d415_cam_depth_py} 0" rpy="${M_PI/2} 0 ${M_PI/2}"/> -->
+                    <origin xyz="${d415_cam_mount_from_center_offset} 0 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
                     <geometry>
                          <mesh filename="package://gazebo_sensor_collection/meshes/cameras/intel/realsense_d415.stl" />
                     </geometry>
-                    <material name="aluminum"/>
+                    <xacro:color_material color="${color}"/>
                </visual>
 
                <collision>
-                    <origin xyz="0 ${-d415_cam_depth_py} 0" rpy="0 0 0"/>
+                    <!-- <origin xyz="0 ${-d415_cam_depth_py} 0" rpy="0 0 0"/> -->
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
                     <geometry>
                          <box size="${d415_cam_depth} ${d415_cam_width} ${d415_cam_height}"/>
                     </geometry>
@@ -47,92 +51,127 @@
                <inertial>
                     <mass value="0.072" />
                     <origin xyz="0 0 0" />
-                    <inertia  ixx="0.003881243"
-                              ixy="0.0"
-                              ixz="0.0"
-                              iyy="0.000498940"
-                              iyz="0.0"
-                              izz="0.003879257"
-                    />
+                    <inertia  ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257" />
                </inertial>
           </link>
+
+          <xacro:color_gazebo parent="${prefix}${name}_link" color="${color}"/>
 
           <!-- ============================================================
           -                   Virtual Optical Camera Links
           - =============================================================== -->
-          <link name="d415_camera_bottom_link"/>
-          <link name="d415_camera_depth_frame"/>
-          <link name="d415_camera_depth_optical_frame"/>
-          <link name="d415_camera_left_ir_frame"/>
-          <link name="d415_camera_left_ir_optical_frame"/>
-          <link name="d415_camera_right_ir_frame"/>
-          <link name="d415_camera_right_ir_optical_frame"/>
-          <link name="d415_camera_color_frame"/>
-          <link name="d415_camera_color_optical_frame"/>
+          <!-- <link name="${name}_bottom_link"/> -->
+          <!-- <link name="${prefix}${name}_sensors_base"/> -->
+          <link name="${name}_aligned_frame"/>
+          <link name="${name}_depth_frame"/>
+          <link name="${name}_depth_optical_frame"/>
+          <link name="${name}_left_ir_frame"/>
+          <link name="${name}_left_ir_optical_frame"/>
+          <link name="${name}_right_ir_frame"/>
+          <link name="${name}_right_ir_optical_frame"/>
+          <link name="${name}_color_frame"/>
+          <link name="${name}_color_optical_frame"/>
 
           <!-- ============================================================
           -                       Joints
           - =============================================================== -->
 
-          <!-- camera body, with origin at bottom screw mount -->
-          <joint name="d415_camera_joint" type="fixed">
+          <joint name="${name}_joint" type="fixed">
                <xacro:insert_block name="origin" />
                <parent link="${parent}"/>
-               <child link="d415_camera_bottom_link" />
+               <child link="${prefix}${name}_link" />
           </joint>
 
-          <joint name="physical_camera_joint" type="fixed">
-               <origin xyz="0 ${d415_cam_depth_py} ${d415_cam_depth_pz}" rpy="0 0 0"/>
-               <parent link="d415_camera_bottom_link"/>
-               <child link="${prefix}d415_camera" />
+          <!-- <joint name="physical_camera_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 0 0"/>
+               <parent link="${prefix}${name}_link"/>
+               <child link="${name}_bottom_link" />
+          </joint> -->
+
+          <!-- <joint name="camera_sensor_joint" type="fixed">
+               <origin xyz="0 ${d415_cam_depth_py} 0" rpy="0 0 0"/>
+               <parent link="${name}_link"/>
+               <child link="${prefix}${name}_sensors_base" />
+          </joint> -->
+          <joint name="${name}_aligned_joint" type="fixed">
+               <origin xyz="0 ${d415_cam_depth_py} 0" rpy="0 0 0"/>
+               <parent link="${prefix}${name}_link"/>
+               <child link="${name}_aligned_frame" />
           </joint>
+          <joint name="${name}_depth_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 0 0"/>
+               <parent link="${name}_aligned_frame"/>
+               <child link="${name}_depth_frame" />
+          </joint>
+          <!-- <joint name="${name}_depth_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 0 0"/>
+               <parent link="${prefix}${name}_sensors_base"/>
+               <child link="${name}_aligned_frame" />
+          </joint> -->
+          <joint name="${name}_color_joint" type="fixed">
+               <origin xyz="0 ${d415_cam_depth_to_color_offset} 0" rpy="0 0 0" />
+               <parent link="${prefix}${name}_aligned_frame" />
+               <child link="${name}_color_frame" />
+          </joint>
+
+          <!-- camera body, with origin at bottom screw mount -->
+          <!-- <joint name="${name}_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_bottom_link" />
+          </joint> -->
+          <!-- <joint name="physical_camera_joint" type="fixed">
+               <origin xyz="0 ${d415_cam_depth_py} ${d415_cam_depth_pz}" rpy="0 0 0"/>
+               <parent link="${name}_bottom_link"/>
+               <child link="${prefix}${name}_link" />
+          </joint> -->
 
           <!-- camera depth joints and links -->
-          <joint name="d415_camera_depth_joint" type="fixed">
+          <!-- <joint name="${name}_depth_joint" type="fixed">
                <origin xyz="0 0 0" rpy="0 0 0"/>
-               <parent link="${prefix}d415_camera"/>
-               <child link="d415_camera_depth_frame" />
-          </joint>
-          <joint name="d415_camera_depth_optical_joint" type="fixed">
+               <parent link="${prefix}${name}_link"/>
+               <child link="${name}_aligned_frame" />
+          </joint> -->
+          <joint name="${name}_depth_optical_joint" type="fixed">
                <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-               <parent link="d415_camera_depth_frame" />
-               <child link="d415_camera_depth_optical_frame" />
+               <parent link="${name}_depth_frame" />
+               <child link="${name}_depth_optical_frame" />
           </joint>
 
           <!-- camera left IR joints and links -->
-          <joint name="d415_camera_left_ir_joint" type="fixed">
+          <joint name="${name}_left_ir_joint" type="fixed">
                <origin xyz="0 ${d415_cam_depth_to_left_ir_offset} 0" rpy="0 0 0" />
-               <parent link="d415_camera_depth_frame" />
-               <child link="d415_camera_left_ir_frame" />
+               <parent link="${name}_aligned_frame" />
+               <child link="${name}_left_ir_frame" />
           </joint>
-          <joint name="d415_camera_left_ir_optical_joint" type="fixed">
+          <joint name="${name}_left_ir_optical_joint" type="fixed">
                <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-               <parent link="d415_camera_left_ir_frame" />
-               <child link="d415_camera_left_ir_optical_frame" />
+               <parent link="${name}_left_ir_frame" />
+               <child link="${name}_left_ir_optical_frame" />
           </joint>
 
           <!-- camera right IR joints and links -->
-          <joint name="d415_camera_right_ir_joint" type="fixed">
+          <joint name="${name}_right_ir_joint" type="fixed">
                <origin xyz="0 ${d415_cam_depth_to_right_ir_offset} 0" rpy="0 0 0" />
-               <parent link="d415_camera_depth_frame" />
-               <child link="d415_camera_right_ir_frame" />
+               <parent link="${name}_aligned_frame" />
+               <child link="${name}_right_ir_frame" />
           </joint>
-          <joint name="d415_camera_right_ir_optical_joint" type="fixed">
+          <joint name="${name}_right_ir_optical_joint" type="fixed">
                <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-               <parent link="d415_camera_right_ir_frame" />
-               <child link="d415_camera_right_ir_optical_frame" />
+               <parent link="${name}_right_ir_frame" />
+               <child link="${name}_right_ir_optical_frame" />
           </joint>
 
           <!-- camera color joints and links -->
-          <joint name="d415_camera_color_joint" type="fixed">
+          <!-- <joint name="${name}_color_joint" type="fixed">
                <origin xyz="0 ${d415_cam_depth_to_color_offset} 0" rpy="0 0 0" />
-               <parent link="d415_camera_depth_frame" />
-               <child link="d415_camera_color_frame" />
-          </joint>
-          <joint name="d415_camera_color_optical_joint" type="fixed">
+               <parent link="${name}_aligned_frame" />
+               <child link="${name}_color_frame" />
+          </joint> -->
+          <joint name="${name}_color_optical_joint" type="fixed">
                <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-               <parent link="d415_camera_color_frame" />
-               <child link="d415_camera_color_optical_frame" />
+               <parent link="${name}_color_frame" />
+               <child link="${name}_color_optical_frame" />
           </joint>
 
 
@@ -141,16 +180,38 @@
           ========================================================= -->
           <gazebo>
                <plugin name="realsense_plugin" filename="libgazebo_ros_realsense.so">
-                    <cameraName>d415</cameraName>
-                    <baseline>55</baseline>            <!-- in mm -->
-                    <depthNearClip>0.1</depthNearClip> <!-- in m -->
-                    <depthFarClip>30.0</depthFarClip>  <!-- in m -->
+                    <cameraName>${name}</cameraName>
+                    <robotBaseFrame>${parent}</robotBaseFrame>
+                    <updateRate>${cam_fps}</updateRate>
+
+                    <depthImageTopic>image_rect_raw</depthImageTopic>
+                    <rgbImageTopic>image_raw</rgbImageTopic>
+                    <ir1ImageTopic>image_raw</ir1ImageTopic>
+                    <ir2ImageTopic>image_raw</ir2ImageTopic>
+                    <depthImageFrameId>camera_aligned_frame</depthImageFrameId>
+                    <rgbImageFrameId>camera_aligned_frame</rgbImageFrameId>
+
+                    <depthNearClip>${min_depth}</depthNearClip>
+                    <depthFarClip>${max_depth}</depthFarClip>
                     <depthScale>0.001</depthScale>
+                    <baseline>0.014732</baseline>
+
+                    <focalLengthXColor>596.391845703125</focalLengthXColor>
+                    <focalLengthYColor>596.391845703125</focalLengthYColor>
+                    <focalLengthXDepth>614.15625</focalLengthXDepth>
+                    <focalLengthYDepth>613.42626953125</focalLengthYDepth>
+
+                    <depthNoiseAuxGain>0.5</depthNoiseAuxGain>
+                    <depthNoiseMean>0.0</depthNoiseMean>
+                    <depthNoiseStd>5.0</depthNoiseStd>
+
+                    <enableStreamsIR>false</enableStreamsIR>
+
                </plugin>
           </gazebo>
 
           <!-- Load parameters to model's main link-->
-          <gazebo reference="${prefix}d415_camera">
+          <gazebo reference="${prefix}${name}_link">
 
                <!-- ================== Color Camera =================== -->
                <sensor name="color" type="camera">
@@ -158,13 +219,13 @@
                     <camera name="__default__">
                          <horizontal_fov>1.211259</horizontal_fov>
                          <image>
-                              <width>640</width>
-                              <height>480</height>
+                              <width>${cam_width}</width>
+                              <height>${cam_height}</height>
                               <format>RGB_INT8</format>
                          </image>
                          <clip>
-                              <near>0.1</near>
-                              <far>100</far>
+                              <near>${min_depth}</near>
+                              <far>${max_depth}</far>
                          </clip>
                          <noise>
                               <type>gaussian</type>
@@ -173,56 +234,8 @@
                          </noise>
                     </camera>
                     <always_on>1</always_on>
-                    <update_rate>60</update_rate>
+                    <update_rate>${cam_fps}</update_rate>
                     <visualize>${visualize}</visualize>
-               </sensor>
-               <!-- ============== Infared Camera 1 =================== -->
-               <sensor name="ired1" type="camera">
-                    <pose frame="">0 -0.06 0.004 0 0 0</pose>
-                    <camera name="__default__">
-                         <horizontal_fov>1.211259</horizontal_fov>
-                         <image>
-                              <width>640</width>
-                              <height>480</height>
-                              <format>L_INT8</format>
-                         </image>
-                         <clip>
-                              <near>0.1</near>
-                              <far>100</far>
-                         </clip>
-                         <noise>
-                              <type>gaussian</type>
-                              <mean>0.0</mean>
-                              <stddev>0.05</stddev>
-                         </noise>
-                    </camera>
-                    <always_on>1</always_on>
-                    <update_rate>60</update_rate>
-                    <visualize>0</visualize>
-               </sensor>
-               <!-- ============== Infared Camera 2 =================== -->
-               <sensor name="ired2" type="camera">
-                    <pose frame="">0 0.01 0.004 0 0 0</pose>
-                    <camera name="__default__">
-                         <horizontal_fov>1.211259</horizontal_fov>
-                         <image>
-                              <width>640</width>
-                              <height>480</height>
-                              <format>L_INT8</format>
-                         </image>
-                         <clip>
-                              <near>0.1</near>
-                              <far>100</far>
-                         </clip>
-                         <noise>
-                              <type>gaussian</type>
-                              <mean>0.0</mean>
-                              <stddev>0.05</stddev>
-                         </noise>
-                    </camera>
-                    <always_on>1</always_on>
-                    <update_rate>60</update_rate>
-                    <visualize>0</visualize>
                </sensor>
                <!-- ================= Depth Camera =================== -->
                <sensor name="depth" type="depth">
@@ -230,8 +243,32 @@
                     <camera name="__default__">
                          <horizontal_fov>1.211259</horizontal_fov>
                          <image>
-                              <width>640</width>
-                              <height>480</height>
+                              <width>${cam_width}</width>
+                              <height>${cam_height}</height>
+                         </image>
+                         <clip>
+                              <near>${min_depth}</near>
+                              <far>${max_depth}</far>
+                         </clip>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>2.0</stddev>
+                         </noise>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>${cam_fps}</update_rate>
+                    <visualize>0</visualize>
+               </sensor>
+               <!-- ============== Infared Camera 1 =================== -->
+               <!-- <sensor name="ired1" type="camera">
+                    <pose frame="">0 -0.06 0.004 0 0 0</pose>
+                    <camera name="__default__">
+                         <horizontal_fov>1.211259</horizontal_fov>
+                         <image>
+                              <width>${cam_width}</width>
+                              <height>${cam_height}</height>
+                              <format>L_INT8</format>
                          </image>
                          <clip>
                               <near>0.1</near>
@@ -240,13 +277,37 @@
                          <noise>
                               <type>gaussian</type>
                               <mean>0.0</mean>
-                              <stddev>0.100</stddev>
+                              <stddev>0.05</stddev>
                          </noise>
                     </camera>
                     <always_on>1</always_on>
-                    <update_rate>60</update_rate>
+                    <update_rate>${cam_fps}</update_rate>
                     <visualize>0</visualize>
-               </sensor>
+               </sensor> -->
+               <!-- ============== Infared Camera 2 =================== -->
+               <!-- <sensor name="ired2" type="camera">
+                    <pose frame="">0 0.01 0.004 0 0 0</pose>
+                    <camera name="__default__">
+                         <horizontal_fov>1.211259</horizontal_fov>
+                         <image>
+                              <width>${cam_width}</width>
+                              <height>${cam_height}</height>
+                              <format>L_INT8</format>
+                         </image>
+                         <clip>
+                              <near>0.1</near>
+                              <far>100</far>
+                         </clip>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.05</stddev>
+                         </noise>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>${cam_fps}</update_rate>
+                    <visualize>0</visualize>
+               </sensor> -->
           </gazebo>
      </xacro:macro>
 

@@ -3,15 +3,15 @@
 
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:macro name="sensor_rplidar" params="prefix visualize:=false parent *origin color min_angle:=3.14159 max_angle:=-3.14159">
+	<xacro:macro name="sensor_rplidar" params="name visualize:=false parent *origin color min_angle:=-3.14159 max_angle:=3.14159">
 
-		<joint name="${prefix}_laser_base_joint" type="fixed">
+		<joint name="${name}_laser_base_joint" type="fixed">
 			<xacro:insert_block name="origin" />
 			<parent link="${parent}"/>
-			<child link="${prefix}_laser_base_link"/>
+			<child link="${name}_laser_base_link"/>
 		</joint>
 
-		<link name="${prefix}_laser_base_link">
+		<link name="${name}_laser_base_link">
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0"/>
 				<geometry>
@@ -34,18 +34,55 @@
 			</inertial>
 		</link>
 
-		<joint name="${prefix}_laser_joint" type="fixed">
+		<joint name="${name}_laser_joint" type="fixed">
 			<origin xyz="0 0 0.0461" rpy="0 0 0"/>
-			<parent link="${prefix}_laser_base_link"/>
-			<child link="${prefix}_laser_link"/>
+			<parent link="${name}_laser_base_link"/>
+			<child link="${name}_laser_link"/>
 		</joint>
 
 
-		<link name="${prefix}_laser_link"/>
+		<link name="${name}_laser_link"/>
 
-		<sensor_rplidar_gazebo/>
-		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+          <xacro:color_gazebo parent="${name}_laser_link" color="${color}"/>
+          <!-- <sensor_rplidar_gazebo/> -->
 
+          <gazebo reference="${name}_laser_link">
+               <sensor type="gpu_ray" name="${name}_rplidar_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>10</update_rate>
+
+                    <ray>
+                         <scan>
+						<horizontal>
+							<samples>361</samples>
+							<resolution>1</resolution>
+							<min_angle>${min_angle}</min_angle>
+							<max_angle>${max_angle}</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.15</min>
+						<max>6.0</max>
+						<resolution>0.0174</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.01</stddev>
+					</noise>
+				</ray>
+
+				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_laser_link</frame_name> -->
+				</plugin>
+			</sensor>
+		</gazebo>
 	</xacro:macro>
 
 	<!-- ====================================================
@@ -53,8 +90,8 @@
 	========================================================= -->
 
 	<xacro:macro name="sensor_rplidar_gazebo">
-		<gazebo reference="${prefix}_laser_link">
-			<sensor type="gpu_ray" name="${prefix}_rplidar_sensor">
+		<gazebo reference="${name}_laser_link">
+			<sensor type="gpu_ray" name="${name}_rplidar_sensor">
 				<pose>0 0 0 0 0 0</pose>
 				<visualize>${visualize}</visualize>
 				<update_rate>10</update_rate>
@@ -80,9 +117,13 @@
 					</noise>
 				</ray>
 
-				<plugin name="gazebo_ros_rplidar_controller" filename="libgazebo_ros_gpu_laser.so">
-					<topicName>${prefix}/scan</topicName>
-					<frameName>${prefix}_laser_link</frameName>
+				<plugin name="gazebo_ros_rplidar_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}/</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_laser_link</frame_name> -->
 				</plugin>
 			</sensor>
 		</gazebo>

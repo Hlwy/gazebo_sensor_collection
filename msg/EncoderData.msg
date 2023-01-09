@@ -1,4 +1,4 @@
-time stamp
+builtin_interfaces/Time stamp
 int32 id
 float64 position
 float64 speed

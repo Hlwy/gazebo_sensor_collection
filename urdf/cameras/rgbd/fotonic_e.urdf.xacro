@@ -3,7 +3,7 @@
 
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:macro name="sensor_fotonic" params="name parent *origin color">
+	<xacro:macro name="sensor_fotonic" params="name parent *origin color:='white'">
 
 		<joint name="${name}_joint" type="fixed">
 			<xacro:insert_block name="origin"/>
@@ -62,7 +62,7 @@
 		</link>
 
 		<!-- Fotonic sensor for simulation -->
-		<sensor_fotonic_gazebo/>
+		<sensor_fotonic_gazebo name="${name}"/>
 		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
 	</xacro:macro>
@@ -71,11 +71,13 @@
 					  Gazebo
 	========================================================= -->
 
-	<xacro:macro name="sensor_fotonic_gazebo">
+	<xacro:macro name="sensor_fotonic_gazebo" params="name">
 
 		<gazebo reference="${name}_depth_frame">
 			<sensor type="depth" name="${name}_sensor">
 				<update_rate>30.0</update_rate>
+                    <always_on>1</always_on>
+
 				<camera name="fotonic">
 					<horizontal_fov>1.221730476</horizontal_fov>  <!-- 70 deg -->
 					<image>
@@ -92,29 +94,30 @@
 						<mean>0.0</mean>
 						<stddev>0.007</stddev>
 					</noise>
+                         <distortion>
+                              <k1>0.0</k1>
+                              <k2>0.0</k2>
+                              <k3>0.0</k3>
+                              <p1>0.0</p1>
+                              <p2>0.0</p2>
+                              <center>0.5 0.5</center>
+                         </distortion>
 				</camera>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_openni_kinect.so">
-					<alwaysOn>true</alwaysOn>
-					<updateRate>10.0</updateRate>
-					<cameraName>${name}</cameraName>
-					<imageTopicName>ir/image_raw</imageTopicName>
-					<cameraInfoTopicName>ir/camera_info</cameraInfoTopicName>
-					<depthImageTopicName>depth/image_raw</depthImageTopicName>
-					<depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
-					<pointCloudTopicName>points</pointCloudTopicName>
-					<frameName>${name}_depth_optical_frame</frameName>
-					<pointCloudCutoff>0.5</pointCloudCutoff>
-					<distortionK1>0</distortionK1>
-					<distortionK2>0</distortionK2>
-					<distortionK3>0</distortionK3>
-					<distortionT1>0</distortionT1>
-					<distortionT2>0</distortionT2>
-					<CxPrime>0</CxPrime>
-					<Cx>0</Cx>
-					<Cy>0</Cy>
-					<focalLength>0</focalLength>
-					<hackBaseline>0</hackBaseline>
+				<plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
+                         <camera_name>${name}</camera_name>
+                         <ros>
+                              <!-- <namespace>custom_ns</namespace> -->
+                              <remapping>${name}/image_raw:=${name}/ir/image_raw</remapping>
+                              <remapping>${name}/camera_info:=${name}/ir/camera_info</remapping>
+                              <remapping>${name}/image_depth:=${name}/depth/image_raw</remapping>
+                              <remapping>${name}/camera_info_depth:=${name}/depth/camera_info</remapping>
+                              <remapping>${name}/points:=${name}/points</remapping>
+                         </ros>
+
+                         <frame_name>${name}_depth_optical_frame</frame_name>
+                         <min_depth>0.5</min_depth>
+					<hack_baseline>0.07</hack_baseline>
 				</plugin>
 			</sensor>
 		</gazebo>

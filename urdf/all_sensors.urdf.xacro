@@ -25,6 +25,11 @@
 
 
 	<!-- ====================================================
+               SITL Plugins for Hardware Devices
+     ========================================================= -->
+	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/devices/devices.urdf.xacro" />
+
+	<!-- ====================================================
                          	Misc
      ========================================================= -->
 	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/misc_sensors.urdf.xacro" />

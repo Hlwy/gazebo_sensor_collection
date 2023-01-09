@@ -1,4 +1,4 @@
-time stamp
+builtin_interfaces/Time stamp
 SensorData3D accel
 SensorData3D gyro
 OrientationSensorData orientation

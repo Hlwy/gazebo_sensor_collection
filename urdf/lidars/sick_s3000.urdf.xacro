@@ -35,8 +35,45 @@
           </link>
 
           <!-- Sick sensor sensor for simulation -->
-          <sensor_sick_s3000_gazebo/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
+          <!-- <sensor_sick_s3000_gazebo/> -->
+          <gazebo reference="${name}_link">
+			<sensor type="gpu_ray" name="${name}_sensor">
+				<pose>0 0 0 0 0 0</pose>
+				<visualize>${visualize}</visualize>
+				<update_rate>16.6</update_rate>
+
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>761</samples>
+							<resolution>1</resolution>
+							<min_angle>-1.6580</min_angle>
+							<max_angle>1.6580</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.10</min>
+						<max>49.0</max>
+						<resolution>0.01</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.01</stddev>
+					</noise>
+				</ray>
+
+				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_link</frame_name> -->
+				</plugin>
+			</sensor>
+		</gazebo>
 
      </xacro:macro>
 
@@ -72,9 +109,13 @@
 					</noise>
 				</ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_gpu_laser.so">
-					<topicName>${name}/scan</topicName>
-					<frameName>${name}_link</frameName>
+				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                         <ros>
+                              <namespace>${name}/</namespace>
+                              <remapping>~/out:=scan</remapping>
+                         </ros>
+                         <!-- <output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>${name}_link</frame_name> -->
 				</plugin>
 			</sensor>
 		</gazebo>
