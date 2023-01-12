@@ -22,249 +22,280 @@ SimpleBatteryPlugin::SimpleBatteryPlugin(){}
 
 // Destructor
 SimpleBatteryPlugin::~SimpleBatteryPlugin() {
-     alive_ = false;
-     queue_.clear();
-     queue_.disable();
-     _nh->shutdown();
-     callback_queue_thread_.join();
-     delete _nh;
-}
-
-// Load the controller
-void SimpleBatteryPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
-
-     this->parent = _parent;
-     this->world = _parent->GetWorld();
-
-     // Define default variables if not defined by user
-     this->robot_namespace_ = "";
-     this->battery_topic_ = "/battery";
-     this->robot_base_frame_ = "base_footprint";
-     this->battery_link_ = "main_battery";
-     this->battery_name_ = "MainBattery";
-
-     this->update_rate_ = 10.0;
-     this->_vmax = 12.0;
-     this->_vmin = 10.0;
-     this->_v0 = _vmax;
-     this->dBattery = 0.0002;
-
-     // Voltages
-     this->e0 = 12.694;
-     this->e1 = -100.1424;
-
-     // Charges
-     this->q0 = 5.2;          // Initial battery charge in Ah
-     this->qt = 0.2;          // Charge rate in A
-     this->et = 0;            // Current voltage
-     this->q = 0;             // Instantaneous battery charge in Ah
-
-     // Battery parameters
-     this->c = 5.2;           // Battery capacity in Ah
-     this->r = 0.061523;      // Battery inner resistance in Ohm
-     this->tau = 1.9499;      // Current low-pass filter characteristic time in seconds
-     this->iraw = 0;          // Raw battery current in A
-     this->ismooth = 0;       // Smoothed battery current in A
-
-     if (!_sdf->HasElement("robotNamespace")) {
-          ROS_INFO_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin missing <robotNamespace>, defaults to \"%s\"",
-          this->robot_namespace_.c_str());
-     } else this->robot_namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
-
-     if (!_sdf->HasElement("robotBaseFrame")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <robotBaseFrame>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->robot_base_frame_.c_str());
-     } else this->robot_base_frame_ = _sdf->GetElement("robotBaseFrame")->Get<std::string>();
-
-     if (!_sdf->HasElement("batteryName")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <batteryName>, defaults to value from robot_description: %f",
-          this->robot_namespace_.c_str(), this->battery_name_);
-     } else this->battery_name_ = _sdf->GetElement("batteryName")->Get<std::string>();
-
-     if (!_sdf->HasElement("batteryLink")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <batteryLink>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->battery_link_.c_str());
-     } else this->battery_link_ = _sdf->GetElement("batteryLink")->Get<std::string>();
-
-     if (!_sdf->HasElement("batteryTopic")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <batteryTopic>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->battery_topic_.c_str());
-     } else this->battery_topic_ = _sdf->GetElement("batteryTopic")->Get<std::string>();
-
-     if (!_sdf->HasElement("updateRate")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <updateRate>, defaults to %f",
-          this->robot_namespace_.c_str(), this->update_rate_);
-     } else this->update_rate_ = _sdf->GetElement("updateRate")->Get<double>();
-
-     /** ============== Sensor Specific Parameters =======================
-     *                       SDF Definable
-     * ============== END Sensor Specific Parameters ======================= */
-
-     if (!_sdf->HasElement("constantCoef")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <constantCoef>, defaults to %f",
-          this->robot_namespace_.c_str(), this->e0);
-     } else this->e0 = _sdf->GetElement("constantCoef")->Get<double>();
-
-     if (!_sdf->HasElement("linearCoef")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <linearCoef>, defaults to %f",
-          this->robot_namespace_.c_str(), this->e1);
-     } else this->e1 = _sdf->GetElement("linearCoef")->Get<double>();
-
-     if (!_sdf->HasElement("initialCharge")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <initialCharge>, defaults to %f",
-          this->robot_namespace_.c_str(), this->q0);
-     } else this->q0 = _sdf->GetElement("initialCharge")->Get<double>();
-
-     if (!_sdf->HasElement("chargeRate")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <chargeRate>, defaults to %f",
-          this->robot_namespace_.c_str(), this->qt);
-     } else this->qt = _sdf->GetElement("chargeRate")->Get<double>();
-
-     if (!_sdf->HasElement("capacity")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <capacity>, defaults to %f",
-          this->robot_namespace_.c_str(), this->c);
-     } else this->c = _sdf->GetElement("capacity")->Get<double>();
-
-     if (!_sdf->HasElement("internalResistance")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <internalResistance>, defaults to %f",
-          this->robot_namespace_.c_str(), this->r);
-     } else this->r = _sdf->GetElement("internalResistance")->Get<double>();
-
-     if (!_sdf->HasElement("smoothCurrentTau")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <smoothCurrentTau>, defaults to %f",
-          this->robot_namespace_.c_str(), this->tau);
-     } else this->tau = _sdf->GetElement("smoothCurrentTau")->Get<double>();
-
-     if (!_sdf->HasElement("vMax")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <vMax>, defaults to %f",
-          this->robot_namespace_.c_str(), this->_vmax);
-     } else this->_vmax = _sdf->GetElement("vMax")->Get<double>();
-
-     if (!_sdf->HasElement("vMin")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <vMin>, defaults to %f",
-          this->robot_namespace_.c_str(), this->_vmin);
-     } else this->_vmin = _sdf->GetElement("vMin")->Get<double>();
-
-     if (!_sdf->HasElement("vInitial")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <vInitial>, defaults to %f",
-          this->robot_namespace_.c_str(), this->_v0);
-     } else this->_v0 = _sdf->GetElement("vInitial")->Get<double>();
-
-     if (!_sdf->HasElement("deltaVoltage")) {
-          ROS_WARN_NAMED("SimpleBattery", "SimpleBatteryPlugin Plugin (ns = %s) missing <deltaVoltage>, defaults to %f",
-          this->robot_namespace_.c_str(), this->dBattery);
-     } else this->dBattery = _sdf->GetElement("deltaVoltage")->Get<double>();
-
-
-     // Initialize update rate stuff
-     if(this->update_rate_ > 0.0) this->update_period_ = 1.0 / this->update_rate_;
-     else this->update_period_ = 0.0;
-
-#if GAZEBO_MAJOR_VERSION < 9
-     last_update_time_ = cur_time_ = this->world->GetSimTime();
-#else
-     last_update_time_ = cur_time_ = this->world->SimTime();
-#endif
-
-     // Make sure the ROS node for Gazebo has already been initialized
-     if (!ros::isInitialized()){
-          ROS_FATAL_STREAM_NAMED("SimpleBattery", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
-          << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
-          return;
-     }
-
-     /** =====================================
-     *     Begin Node after settings have
-     * been set by default, if not user.
-     ===================================== */
-
-     ROS_INFO_NAMED("SimpleBattery", "Starting SimpleBatteryPlugin Plugin (ns = %s)", this->robot_namespace_.c_str());
-
-     _nh = new ros::NodeHandle(this->robot_namespace_);
-     battery_level_pub_ = _nh->advertise<gazebo_sensor_collection::BatteryData>(battery_topic_, 1);
-
-     this->callback_queue_thread_ = boost::thread(boost::bind(&SimpleBatteryPlugin::QueueThread, this));
-     this->update_connection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&SimpleBatteryPlugin::OnUpdate, this));
-
-     update_count_ = 0;
-     x_ = 0;
-     rot_ = 0;
-     alive_ = true;
-
-     ROS_GREEN_STREAM("Created a battery");
-}
-
-void SimpleBatteryPlugin::Init(){
-     // ROS_GREEN_STREAM("Init Battery");
-     this->q = this->q0;
-     this->charging = false;
+     updateTimer.Disconnect(updateConnection);
 }
 
 void SimpleBatteryPlugin::Reset(){
-    this->iraw = 0.0;
-    this->ismooth = 0.0;
-    this->Init();
+     updateTimer.Reset();
+     update_count_ = 0;
+     charging_ = false;
+     curVolts_ = vInit_;
+     curCharge_ = q0_;
+     prevVolts_ = curVolts_;
+     prevCharge_ = curCharge_;
 }
 
-double SimpleBatteryPlugin::OnUpdateVoltage(const common::BatteryPtr &_battery){
-     return et;
+// Load the controller
+void SimpleBatteryPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
+     world = _model->GetWorld();
+     node_ = gazebo_ros::Node::Get(_sdf);
+
+     // load parameters
+     if(!_sdf->HasElement("robotNamespace")) namespace_.clear();
+     else namespace_ = _sdf->GetElement("robotNamespace")->GetValue()->GetAsString();
+
+     if(!_sdf->HasElement("bodyName")){
+          link = _model->GetLink();
+          link_name_ = link->GetName();
+     } else{
+          link_name_ = _sdf->GetElement("bodyName")->GetValue()->GetAsString();
+          link = _model->GetLink(link_name_);
+     }
+     if(!link){
+          RCLCPP_FATAL(this->node_->get_logger(), "SimpleBatteryPlugin plugin error: bodyName: %s does not exist\n", link_name_.c_str());
+          return;
+     }
+
+     // Define default variables if not defined by user
+     frame_id_ = "/world";
+     topic_ = "/battery";
+     update_rate_ = 10.0;
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+
+     nCells_ = 3.0;
+     vCutoff_ = 9.0;
+     vMin_ = 11.1;
+     vMax_ = 12.6;
+     vInit_ = 11.8;
+     iDraw_ = 1.5;
+     e0_ = 12.694;
+     e1_ = -100.1424;
+     capacity_ = 10.0;
+     q0_ = 10.0;
+     tau_ = 1.9499;
+     charging_ = true;
+     chargeRate_ = 0.2;
+     dischargeRate_ = 0.5;
+     rInternal_ = 0.061523;
+
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+     // if(_sdf->HasElement("referenceLongitude")) _sdf->GetElement("referenceLongitude")->GetValue()->Get(reference_longitude_);
+
+     // Make sure the ROS node for Gazebo has already been initialized
+     if(!rclcpp::ok()){
+          RCLCPP_FATAL_STREAM(node_->get_logger(),
+               "A ROS node for Gazebo has not been initialized, unable to load plugin. " <<
+               "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)"
+          );
+          return;
+     }
+
+     node_ = new ros::NodeHandle(namespace_);
+     battery_pub_ = node_->create_publisher<gazebo_sensor_collection::msg::BatteryData>(topic_, 10);
+     // set_geopose_srv_ = node_->create_service<gazebo_sensor_collection::srv::SetReferenceGeoPose>(fix_topic_ + "/set_reference_geopose",
+     //     std::bind(&SimpleBatteryPlugin::setGeoposeCb, this, std::placeholders::_1, std::placeholders::_2)
+     // );
+
+     // Setup the BatteryConfig parameters and respective callback handlers
+     battery_config = std::make_shared<SimulatedBatteryConfig>(node_);
+     callback_handle_ = node_->add_on_set_parameters_callback(std::bind(&SimpleBatteryPlugin::parametersChangedCallback, this, std::placeholders::_1));
+
+     Reset();
+
+     // connect Update function
+     updateTimer.setUpdateRate(update_rate_);
+     updateTimer.Load(world, _sdf);
+     updateConnection = updateTimer.Connect(boost::bind(&SimpleBatteryPlugin::Update, this));
+
+     // ROS_GREEN_STREAM("Created a battery");
 }
 
-void SimpleBatteryPlugin::OnUpdate(){
-     update_count_++;
-     double dt = 0.0;
-     double totalpower = 0.0;
+void SimpleBatteryPlugin::Update(){
+     common::Time sim_time_now = getWorldTimeNow();
+     double dt = getUpdateTimeDelta();
 
-#if GAZEBO_MAJOR_VERSION < 9
-     dt = this->world->GetPhysicsEngine()->GetMaxStepSize();
-#else
-     dt = this->world->Physics()->GetMaxStepSize();
-#endif
-     double k = dt / this->tau;
+     double k = dt / tau_;
+     curCharge_ = prevCharge_ - (dt * k)*SECS_TO_HRS;
+     curVolts_ = e0_ + e1_ * (1 - curCharge_ / capacity_);
 
+     // double totalpower = 0.0;
      // current = power(Watts)/Voltage
-     // this->iraw = totalpower / _battery->Voltage();
+     // this->idraw = totalpower / _battery->Voltage();
 
-     this->q = this->q - GZ_SEC_TO_HOUR(dt * k);
-     this->et = this->e0 + this->e1 * (1 - this->q / this->c);
-#if GAZEBO_MAJOR_VERSION < 9
-          this->last_update_time_ = this->world->GetSimTime();
-#else
-          this->last_update_time_ = this->world->SimTime();
-#endif
+     // ROS_INFO_STREAM(curVolts_);
+     // gzdbg << "Current charge:" << curCharge_ << ", at:" << this->sim_time_now << "\n";
+     // gzdbg << "Current voltage:" << curVolts_ << ", at:" << this->last_update_time_.Double() << "\n";
 
+     update_count_++;
+     prevCharge_ = curCharge_;
+     prevVolts_ = curVolts_;
 
-     // ROS_INFO_STREAM(this->et);
-     // gzdbg << "Current charge:" << this->q << ", at:" << this->sim_time_now << "\n";
-     // gzdbg << "Current voltage:" << this->et << ", at:" << this->last_update_time_.Double() << "\n";
-
-     // ROS_CYAN_STREAM(update_count_);
-     this->publishBatteryInfo();
+     // battery_data_.header.frame_id = frame_id_;
+     battery_data_.stamp = gazeboTimeToRclTime(sim_time_now);
+     battery_data_.vmin = vMin_;
+     battery_data_.vmax = vMax_;
+     battery_data_.voltage = curVolts_;
+     battery_pub_->publish(battery_data_);
 }
 
-void SimpleBatteryPlugin::QueueThread() {
-     static const double timeout = 0.01;
+rcl_interfaces::msg::SetParametersResult SimpleBatteryPlugin::checkStatusParameters(const std::vector<rclcpp::Parameter> & parameters){
+     using gazebo_sensor_collection::msg::SimulatedBatteryConfig;
+     rcl_interfaces::msg::SetParametersResult result;
+     result.successful = true;
+     result.reason = "";
 
-     while (alive_ && _nh->ok()){
-          queue_.callAvailable(ros::WallDuration(timeout));
+     // result.successful = false;
+     // result.reason = "Parameter not found";
+     for (const auto & parameter : parameters){
+          std::string name = parameter.get_name();
+          if(  name == "cell_count" || name == "voltage_cutoff" ||
+               name == "voltage_min" || name == "voltage_max" ||
+               name == "voltage_initial" || name == "current_draw" ||
+               name == "e_constant_coeff" || name == "e_linear_coeff" ||
+               name == "charge_capacity" || name == "charge_initial" ||
+               name == "charge_tau" || name == "charging" || name == "charge_rate" ||
+               name == "discharge_rate" || name == "internal_resistance"
+          ){
+               result.successful = true;
+               result.reason = "";
+               double cell_count(3.0);
+               double voltage_cutoff(9.0);
+               double voltage_min(11.1);
+               double voltage_max(12.6);
+               double voltage_initial(11.8);
+               double current_draw(1.5);
+               double e_constant_coeff(12.694);
+               double e_linear_coeff(-100.1424);
+               double charge_capacity(10.0);
+               double charge_initial(10.0);
+               double charge_tau(1.9499);
+               bool charging(false);
+               double charge_rate(0.2);
+               double discharge_rate(0.5);
+               double internal_resistance(0.061523);
+
+               node_->get_parameter("cell_count", cell_count);
+               node_->get_parameter("voltage_cutoff", voltage_cutoff);
+               node_->get_parameter("voltage_min", voltage_min);
+               node_->get_parameter("voltage_max", voltage_max);
+               node_->get_parameter("voltage_initial", voltage_initial);
+               node_->get_parameter("current_draw", current_draw);
+               node_->get_parameter("e_constant_coeff", e_constant_coeff);
+               node_->get_parameter("e_linear_coeff", e_linear_coeff);
+               node_->get_parameter("charge_capacity", charge_capacity);
+               node_->get_parameter("charge_initial", charge_initial);
+               node_->get_parameter("charge_tau", charge_tau);
+               node_->get_parameter("charging", charging);
+               node_->get_parameter("charge_rate", charge_rate);
+               node_->get_parameter("discharge_rate", discharge_rate);
+               node_->get_parameter("internal_resistance", internal_resistance);
+               RCLCPP_INFO(node_->get_logger(), "Battery Config parameter changed");
+
+               if(cell_count != nCells_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "nCells_", nCells_, cell_count);
+                    nCells_ = cell_count;
+               }
+               if(voltage_cutoff != vCutoff_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "vCutoff_", vCutoff_, voltage_cutoff);
+                    vCutoff_ = voltage_cutoff;
+               }
+               if(voltage_min != vMin_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "vMin_", vMin_, voltage_min);
+                    vMin_ = voltage_min;
+               }
+               if(voltage_max != vMax_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "vMax_", vMax_, voltage_max);
+                    vMax_ = voltage_max;
+               }
+               if(voltage_initial != vInit_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "vInit_", vInit_, voltage_initial);
+                    vInit_ = voltage_initial;
+               }
+               if(current_draw != iDraw_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "iDraw_", iDraw_, current_draw);
+                    iDraw_ = current_draw;
+               }
+               if(e_constant_coeff != e0_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "e0_", e0_, e_constant_coeff);
+                    e0_ = e_constant_coeff;
+               }
+               if(e_linear_coeff != e1_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "e1_", e1_, e_linear_coeff);
+                    e1_ = e_linear_coeff;
+               }
+               if(charge_capacity != capacity_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "capacity_", capacity_, charge_capacity);
+                    capacity_ = charge_capacity;
+               }
+               if(charge_initial != q0_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "q0_", q0_, charge_initial);
+                    q0_ = charge_initial;
+               }
+               if(charge_tau != tau_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "tau_", tau_, charge_tau);
+                    tau_ = charge_tau;
+               }
+
+               if(charging != charging_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %s ---> %s", "charging_", charging_ ? "Charging" : "Discharging" , charging ? "Charging" : "Discharging" );
+                    charging_ = charging;
+               }
+               if(charge_rate != chargeRate_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "chargeRate_", chargeRate_, charge_rate);
+                    chargeRate_ = charge_rate;
+               }
+               if(discharge_rate != dischargeRate_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "dischargeRate_", dischargeRate_, discharge_rate);
+                    dischargeRate_ = discharge_rate;
+               }
+               if(internal_resistance != rInternal_){
+                    RCLCPP_WARN(node_->get_logger(), "SimulatedBattery Param \'%s\' changed from %d ---> %d", "rInternal_", rInternal_, internal_resistance);
+                    rInternal_ = internal_resistance;
+               }
+
+          }
+     }
+     return result;
+}
+rcl_interfaces::msg::SetParametersResult SimpleBatteryPlugin::parametersChangedCallback(const std::vector<rclcpp::Parameter> & parameters){
+     rcl_interfaces::msg::SetParametersResult result_status, result_pos, result_vel;
+
+     result_status = checkStatusParameters(parameters);
+     // result_pos = position_error_model_.parametersChangedCallback(parameters);
+     // result_vel = velocity_error_model_.parametersChangedCallback(parameters);
+
+     // Return the final result
+     if(result_status.successful
+          // && result_pos.successful && result_vel.successful
+     ){
+          rcl_interfaces::msg::SetParametersResult result;
+          result.successful = true;
+          result.reason = "";
+          return result;
+     } else{
+          if(!result_status.successful){ return result_status; }
+          // else if(!result_pos.successful){ return result_pos; }
+          // else{ return result_vel; }
      }
 }
 
-void SimpleBatteryPlugin::publishBatteryInfo() {
-     ros::Time current_time = ros::Time::now();
-
-     // Package battery message header
-     this->sim_battery_.stamp = current_time;
-     // this->sim_battery_.header.frame_id = robot_base_frame_;
-     // this->sim_battery_.child_frame_id = battery_link_;
-
-     // Package battery message
-     this->sim_battery_.vmax = _vmax;
-     this->sim_battery_.vmin = _vmin;
-     this->sim_battery_.voltage = this->et;
-
-     battery_level_pub_.publish(sim_battery_);
-}
-
-  GZ_REGISTER_MODEL_PLUGIN(SimpleBatteryPlugin)
+GZ_REGISTER_MODEL_PLUGIN(SimpleBatteryPlugin)
 }
