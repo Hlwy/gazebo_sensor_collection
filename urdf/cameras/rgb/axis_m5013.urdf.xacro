@@ -30,14 +30,14 @@
                     <!-- to center the axis model -->
                     <origin xyz="0 0 0" rpy="0 ${M_PI/2} 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/axis/axis_m5013.dae" scale="1.0 1.0 1.0"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/axis/axis_m5013.dae" scale="1.0 1.0 1.0"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
                <collision>
                     <origin xyz="0.0 0.0 0" rpy="0 ${M_PI/2} 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/axis/axis_m5013.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/axis/axis_m5013.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                </collision>
           </link>
@@ -128,7 +128,7 @@
           </link>
 
           <!-- Axis sensor for simulation -->
-          <sensor_axis_m5013_gazebo name="${name}"/>
+          <xacro:sensor_axis_m5013_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>
@@ -137,24 +137,23 @@
                            Gazebo
      ========================================================= -->
 
-	<xacro:macro name="sensor_axis_m5013_gazebo" params="name">
-
-		<gazebo reference="${name}_frame"> <!-- the image will be generated from this (${name}_frame) point of view, with the front being the X axis -->
-			<sensor type="camera" name="${name}_sensor">
-				<update_rate>30.0</update_rate>
+     <xacro:macro name="sensor_axis_m5013_gazebo" params="name">
+          <gazebo reference="${name}_frame"> <!-- the image will be generated from this (${name}_frame) point of view, with the front being the X axis -->
+               <sensor type="camera" name="${name}_sensor">
+                    <update_rate>30.0</update_rate>
                     <always_on>1</always_on>
 
-				<camera name="${name}">
-					<horizontal_fov>${60.0*M_PI/180.0}</horizontal_fov>
-					<image>
-						<format>R8G8B8</format>
-						<width>640</width>
-						<height>480</height>
-					</image>
-					<clip>
-						<near>0.05</near>
-						<far>8.0</far>
-					</clip>
+                    <camera name="${name}">
+                         <horizontal_fov>${60.0*M_PI/180.0}</horizontal_fov>
+                         <image>
+                              <format>R8G8B8</format>
+                              <width>640</width>
+                              <height>480</height>
+                         </image>
+                         <clip>
+                              <near>0.05</near>
+                              <far>8.0</far>
+                         </clip>
                          <distortion>
                               <k1>0.0</k1>
                               <k2>0.0</k2>
@@ -163,24 +162,25 @@
                               <p2>0.0</p2>
                               <center>0.5 0.5</center>
                          </distortion>
-				</camera>
+                    </camera>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
-				    <camera_name>${name}</camera_name>
-                        <ros>
-                            <!-- <namespace>custom_ns</namespace> -->
-                            <remapping>image_raw:=image_raw</remapping>
-                            <remapping>camera_info:=camera_info</remapping>
-                       </ros>
-                       <frame_name>${name}_optical_frame</frame_name>
+                    <plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
+                         <camera_name>${name}</camera_name>
+                         <ros>
+                              <!-- <namespace>custom_ns</namespace> -->
+                              <remapping>image_raw:=image_raw</remapping>
+                              <remapping>camera_info:=camera_info</remapping>
+                         </ros>
+                         <frame_name>${name}_optical_frame</frame_name>
 
-					<!-- this is just which name the Image msg will have, it does not affect the simulation.
-					     However must be set to the optical_frame,  -->
-					<hack_baseline>0.07</hack_baseline>
-				</plugin>
-			</sensor>
-		</gazebo>
+                         <!-- this is just which name the Image msg will have, it does not affect the simulation.
+                         However must be set to the optical_frame,  -->
+                         <hack_baseline>0.07</hack_baseline>
+                    </plugin>
+               </sensor>
+          </gazebo>
 
-	</xacro:macro>
+     </xacro:macro>
+
 
 </robot>

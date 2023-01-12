@@ -194,7 +194,7 @@ def launch_setup(context, *args, **kwargs):
 
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
         # arguments=['-entity', 'mulecar', '-file', 'descriptions/sdf/model.sdf'],
-        arguments=["-topic", "robot_description", "-entity", "robot", "-x", "0.0", "-y", "0.0", "-z", "0.5"],
+        arguments=["-topic", "robot_description", "-entity", "robot", "-x", "0.0", "-y", "0.0", "-z", "0.0"],
         output='screen'
     )
     robot_state_publisher_node = Node(package='robot_state_publisher',
@@ -268,7 +268,7 @@ def generate_launch_description():
         DeclareLaunchArgument("world_package", default_value=""),
         DeclareLaunchArgument("world_file", default_value="cafe.world"),
         DeclareLaunchArgument('rqt', default_value='false'),
-        DeclareLaunchArgument('rviz', default_value='true'),
+        DeclareLaunchArgument('rviz', default_value='false'),
 
         OpaqueFunction(function = launch_setup)
         ])

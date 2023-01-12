@@ -48,7 +48,7 @@
                <visual>
                     <origin xyz="-0.01 0 0" rpy="${-M_PI/2} -${M_PI} ${-M_PI/2}"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/asus/asus_xtion_pro_live.dae" scale="${asus_xtion_scale} ${asus_xtion_scale} ${asus_xtion_scale}"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/asus/asus_xtion_pro_live.dae" scale="${asus_xtion_scale} ${asus_xtion_scale} ${asus_xtion_scale}"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
@@ -94,7 +94,7 @@
           </link>
 
           <!-- RGBD sensor for simulation, same as Kinect -->
-          <sensor_xtion_pro_gazebo name="${name}"/>
+          <xacro:sensor_xtion_pro_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>

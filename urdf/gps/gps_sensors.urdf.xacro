@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot name="gps_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
-	<!-- ====================================================
-                         	Misc
+     <!-- ====================================================
+     Misc
      ========================================================= -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_standard.urdf.xacro" />
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_quad.urdf.xacro" />
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_mast.urdf.xacro" />
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_dropout.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_standard.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_quad.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_mast.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/gps/gps_with_dropout.urdf.xacro" />
 
 </robot>

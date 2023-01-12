@@ -1,131 +1,130 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:macro name="sensor_sick_tim571" params="name visualize:=false parent *origin color min_angle:=-2.36 max_angle:=2.36">
 
-	<xacro:macro name="sensor_sick_tim571" params="name visualize:=false parent *origin color min_angle:=-2.36 max_angle:=2.36">
+          <joint name="${name}_base_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_base_link"/>
+          </joint>
 
-		<joint name="${name}_base_joint" type="fixed">
-			<xacro:insert_block name="origin" />
-			<parent link="${parent}"/>
-			<child link="${name}_base_link"/>
-		</joint>
+          <link name="${name}_base_link">
+               <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/sick/sick_tim571.dae"/>
+                    </geometry>
+               </collision>
 
-		<link name="${name}_base_link">
-			<collision>
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/lidars/sick/sick_tim571.dae"/>
-				</geometry>
-			</collision>
+               <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/sick/sick_tim571.dae"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
 
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/lidars/sick/sick_tim571.dae"/>
-				</geometry>
-				<xacro:color_material color="${color}"/>
-			</visual>
+               <inertial>
+                    <mass value="1e-5" />
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+               </inertial>
+          </link>
 
-			<inertial>
-				<mass value="1e-5" />
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
-			</inertial>
-		</link>
+          <joint name="${name}_joint" type="fixed">
+               <origin xyz="0 0 0.06246" rpy="0 0 0"/>
+               <parent link="${name}_base_link"/>
+               <child link="${name}_link"/>
+          </joint>
 
-		<joint name="${name}_joint" type="fixed">
-			<origin xyz="0 0 0.06246" rpy="0 0 0"/>
-			<parent link="${name}_base_link"/>
-			<child link="${name}_link"/>
-		</joint>
+          <link name="${name}_link"/>
 
-		<link name="${name}_link"/>
-
-		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
           <!-- <sensor_sick_tim571_gazebo/> -->
           <gazebo reference="${name}_link">
-			<sensor type="gpu_ray" name="${name}_sensor">
-				<pose>0 0 0 0 0 0</pose>
-				<visualize>${visualize}</visualize>
-				<update_rate>15</update_rate>
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>15</update_rate>
 
-				<ray>
-					<scan>
-						<horizontal>
-							<samples>819</samples>
-							<resolution>1</resolution>
-							<min_angle>${min_angle}</min_angle>
-							<max_angle>${max_angle}</max_angle>
-						</horizontal>
-					</scan>
-					<range>
-						<min>0.05</min>
-						<max>25.0</max>
-						<resolution>0.00575</resolution>
-					</range>
-					<noise>
-						<type>gaussian</type>
-						<mean>0.0</mean>
-						<stddev>0.01</stddev>
-					</noise>
-				</ray>
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>819</samples>
+                                   <resolution>1</resolution>
+                                   <min_angle>${min_angle}</min_angle>
+                                   <max_angle>${max_angle}</max_angle>
+                              </horizontal>
+                         </scan>
+                         <range>
+                              <min>0.05</min>
+                              <max>25.0</max>
+                              <resolution>0.00575</resolution>
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
                          <ros>
                               <!-- <namespace>${name}/</namespace> -->
                               <remapping>~/out:=${name}/scan</remapping>
                          </ros>
                          <!-- <output_type>sensor_msgs/LaserScan</output_type>
-					<frame_name>${name}_link</frame_name> -->
-				</plugin>
-			</sensor>
-		</gazebo>
+                         <frame_name>${name}_link</frame_name> -->
+                    </plugin>
+               </sensor>
+          </gazebo>
 
-	</xacro:macro>
+     </xacro:macro>
 
-	<!-- ====================================================
-					  Gazebo
-	========================================================= -->
+     <!-- ====================================================
+     Gazebo
+     ========================================================= -->
 
-	<xacro:macro name="sensor_sick_tim571_gazebo">
-		<gazebo reference="${name}_link">
-			<sensor type="gpu_ray" name="${name}_sensor">
-				<pose>0 0 0 0 0 0</pose>
-				<visualize>${visualize}</visualize>
-				<update_rate>15</update_rate>
+     <xacro:macro name="sensor_sick_tim571_gazebo">
+          <gazebo reference="${name}_link">
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>15</update_rate>
 
-				<ray>
-					<scan>
-						<horizontal>
-							<samples>819</samples>
-							<resolution>1</resolution>
-							<min_angle>${min_angle}</min_angle>
-							<max_angle>${max_angle}</max_angle>
-						</horizontal>
-					</scan>
-					<range>
-						<min>0.05</min>
-						<max>25.0</max>
-						<resolution>0.00575</resolution>
-					</range>
-					<noise>
-						<type>gaussian</type>
-						<mean>0.0</mean>
-						<stddev>0.01</stddev>
-					</noise>
-				</ray>
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>819</samples>
+                                   <resolution>1</resolution>
+                                   <min_angle>${min_angle}</min_angle>
+                                   <max_angle>${max_angle}</max_angle>
+                              </horizontal>
+                         </scan>
+                         <range>
+                              <min>0.05</min>
+                              <max>25.0</max>
+                              <resolution>0.00575</resolution>
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
                          <ros>
                               <namespace>${name}/</namespace>
                               <remapping>~/out:=scan</remapping>
                          </ros>
                          <!-- <output_type>sensor_msgs/LaserScan</output_type>
-					<frame_name>${name}_link</frame_name> -->
-				</plugin>
-			</sensor>
-		</gazebo>
-	</xacro:macro>
+                         <frame_name>${name}_link</frame_name> -->
+                    </plugin>
+               </sensor>
+          </gazebo>
+     </xacro:macro>
 
 </robot>

@@ -59,10 +59,10 @@
                     <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
                     <geometry>
                          <xacro:if value="${base}">
-                              <mesh filename="package://gazebo_sensor_collection/meshes/cameras/microsoft/kinectv2.dae"/>
+                              <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/microsoft/kinectv2.dae"/>
                          </xacro:if>
                          <xacro:unless value="${base}">
-                              <mesh filename="package://gazebo_sensor_collection/meshes/cameras/microsoft/kinectv2_nobase.dae"/>
+                              <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/microsoft/kinectv2_nobase.dae"/>
                          </xacro:unless>
                     </geometry>
                     <xacro:color_material color="${color}"/>
@@ -120,7 +120,7 @@
           </link>
 
           <!-- Kinect sensor for simulation -->
-          <sensor_kinectv2_gazebo name="${name}"/>
+          <xacro:sensor_kinectv2_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>

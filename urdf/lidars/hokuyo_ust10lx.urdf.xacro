@@ -1,129 +1,128 @@
 <?xml version="1.0"?>
 <robot name="sensor_hokuyo_ust10lx" xmlns:xacro="http://ros.org/wiki/xacro">
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:macro name="sensor_hokuyo_ust10lx" params="name visualize:=false parent *origin color min_angle:=-2.3562 max_angle:=2.3562">
 
-	<xacro:macro name="sensor_hokuyo_ust10lx" params="name visualize:=false parent *origin color min_angle:=-2.3562 max_angle:=2.3562">
+          <joint name="${name}_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_link"/>
+          </joint>
 
-		<joint name="${name}_joint" type="fixed">
-			<xacro:insert_block name="origin" />
-			<parent link="${parent}"/>
-			<child link="${name}_link"/>
-		</joint>
+          <link name="${name}_link">
+               <collision>
+                    <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+                    <geometry>
+                         <box size="0.010 0.010 0.010"/>
+                    </geometry>
+               </collision>
 
-		<link name="${name}_link">
-			<collision>
-				<origin xyz="0 0 -0.05" rpy="0 0 0"/>
-				<geometry>
-					<box size="0.010 0.010 0.010"/>
-				</geometry>
-			</collision>
+               <visual>
+                    <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/hokuyo/hokuyo_ust_10lx.dae"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
 
-			<visual>
-				<origin xyz="0 0 -0.05" rpy="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/lidars/hokuyo/hokuyo_ust_10lx.dae"/>
-				</geometry>
-				<xacro:color_material color="${color}"/>
-			</visual>
+               <inertial>
+                    <mass value="1e-5" />
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+               </inertial>
+          </link>
 
-			<inertial>
-				<mass value="1e-5" />
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
-			</inertial>
-		</link>
-
-		<!-- Hokuyo sensor for simulation -->
-		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+          <!-- Hokuyo sensor for simulation -->
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
           <!-- <sensor_hokuyo_ust_gazebo/> -->
           <gazebo reference="${name}_link">
-			<sensor type="gpu_ray" name="${name}_sensor">
-				<pose>0 0 0 0 0 0</pose>
-				<visualize>${visualize}</visualize>
-				<update_rate>40</update_rate>
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>40</update_rate>
 
-				<ray>
-					<scan>
-						<horizontal>
-							<samples>1081</samples>
-							<resolution>1</resolution>
-							<min_angle>${min_angle}</min_angle>
-							<max_angle>${max_angle}</max_angle>
-						</horizontal>
-					</scan>
-					<range>
-						<min>0.06</min>
-						<max>20.0</max>
-						<!-- resolution>0.004363323</resolution -->
-						<resolution>0.004359297</resolution>
-						<!-- resolution>0.001</resolution -->
-					</range>
-					<noise>
-						<type>gaussian</type>
-						<mean>0.0</mean>
-						<stddev>0.01</stddev>
-					</noise>
-				</ray>
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>1081</samples>
+                                   <resolution>1</resolution>
+                                   <min_angle>${min_angle}</min_angle>
+                                   <max_angle>${max_angle}</max_angle>
+                              </horizontal>
+                         </scan>
+                         <range>
+                              <min>0.06</min>
+                              <max>20.0</max>
+                              <!-- resolution>0.004363323</resolution -->
+                              <resolution>0.004359297</resolution>
+                              <!-- resolution>0.001</resolution -->
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
                          <ros>
                               <namespace>${name}</namespace>
                               <remapping>~/out:=scan</remapping>
                          </ros>
                          <!-- <output_type>sensor_msgs/LaserScan</output_type>
-					<frame_name>${name}_link</frame_name> -->
-				</plugin>
-			</sensor>
-		</gazebo>
+                         <frame_name>${name}_link</frame_name> -->
+                    </plugin>
+               </sensor>
+          </gazebo>
 
-	</xacro:macro>
+     </xacro:macro>
 
-	<!-- ====================================================
-					  Gazebo
-	========================================================= -->
+     <!-- ====================================================
+     Gazebo
+     ========================================================= -->
 
-	<xacro:macro name="sensor_hokuyo_ust_gazebo">
-		<gazebo reference="${name}_link">
-			<sensor type="gpu_ray" name="${name}_sensor">
-				<pose>0 0 0 0 0 0</pose>
-				<visualize>${visualize}</visualize>
-				<update_rate>40</update_rate>
+     <xacro:macro name="sensor_hokuyo_ust_gazebo">
+          <gazebo reference="${name}_link">
+               <sensor type="gpu_ray" name="${name}_sensor">
+                    <pose>0 0 0 0 0 0</pose>
+                    <visualize>${visualize}</visualize>
+                    <update_rate>40</update_rate>
 
-				<ray>
-					<scan>
-						<horizontal>
-							<samples>1081</samples>
-							<resolution>1</resolution>
-							<min_angle>${min_angle}</min_angle>
-							<max_angle>${max_angle}</max_angle>
-						</horizontal>
-					</scan>
-					<range>
-						<min>0.06</min>
-						<max>20.0</max>
-						<!-- resolution>0.004363323</resolution -->
-						<resolution>0.004359297</resolution>
-						<!-- resolution>0.001</resolution -->
-					</range>
-					<noise>
-						<type>gaussian</type>
-						<mean>0.0</mean>
-						<stddev>0.01</stddev>
-					</noise>
-				</ray>
+                    <ray>
+                         <scan>
+                              <horizontal>
+                                   <samples>1081</samples>
+                                   <resolution>1</resolution>
+                                   <min_angle>${min_angle}</min_angle>
+                                   <max_angle>${max_angle}</max_angle>
+                              </horizontal>
+                         </scan>
+                         <range>
+                              <min>0.06</min>
+                              <max>20.0</max>
+                              <!-- resolution>0.004363323</resolution -->
+                              <resolution>0.004359297</resolution>
+                              <!-- resolution>0.001</resolution -->
+                         </range>
+                         <noise>
+                              <type>gaussian</type>
+                              <mean>0.0</mean>
+                              <stddev>0.01</stddev>
+                         </noise>
+                    </ray>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_ray_sensor.so">
                          <ros>
                               <namespace>${name}/</namespace>
                               <remapping>~/out:=scan</remapping>
                          </ros>
                          <!-- <output_type>sensor_msgs/LaserScan</output_type>
-					<frame_name>${name}_link</frame_name> -->
-				</plugin>
-			</sensor>
-		</gazebo>
-	</xacro:macro>
+                         <frame_name>${name}_link</frame_name> -->
+                    </plugin>
+               </sensor>
+          </gazebo>
+     </xacro:macro>
 
 </robot>

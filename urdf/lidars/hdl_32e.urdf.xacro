@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="HDL-32E">
   <xacro:property name="M_PI" value="3.1415926535897931" />
-  <xacro:macro name="sensor_hdl_32e" params="*origin visualize:=false parent:=base_link color:='' name:=velodyne topic:=/velodyne_points hz:=10 lasers:=32 samples:=2187 collision_range:=0.3 min_range:=0.9 max_range:=130.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI}">
+  <xacro:macro name="sensor_hdl_32e" params="*origin visualize:=false parent:=base_link color:='' name:=velodyne topic:=/lidar/points hz:=10 lasers:=32 samples:=2187 collision_range:=0.3 min_range:=0.9 max_range:=130.0 noise:=0.008 min_angle:=-${M_PI} max_angle:=${M_PI}">
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" />
@@ -19,7 +19,7 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://gazebo_sensor_collection/meshes/lidars/velodyne/HDL32E_base.dae" />
+          <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/velodyne/HDL32E_base.dae" />
         </geometry>
       </visual>
       <collision>
@@ -45,7 +45,7 @@
       <visual>
         <origin xyz="0 0 -0.09081" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://gazebo_sensor_collection/meshes/lidars/velodyne/HDL32E_scan.dae" />
+          <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/velodyne/HDL32E_scan.dae" />
         </geometry>
       </visual>
     </link>

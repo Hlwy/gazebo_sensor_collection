@@ -1,38 +1,33 @@
 <?xml version="1.0"?>
 <robot name="camera_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
-	<!-- ====================================================
-                         	RGB
+     <!-- ====================================================
+                         RGB
      ========================================================= -->
-	<!-- Axis p5512 -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/axis_p5512.urdf.xacro" />
+     <!-- Axis p5512 -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/axis_p5512.urdf.xacro" />
+     <!-- Axis m5013 -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/axis_m5013.urdf.xacro" />
+     <!-- uEye CP Gige -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/ueye_cp_gige.urdf.xacro" />
+     <!-- ELP USB Camera w/ Normal Lens -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/elp_usb_camera.urdf.xacro" />
 
-	<!-- Axis m5013 -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/axis_m5013.urdf.xacro" />
-
-	<!-- uEye CP Gige -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/ueye_cp_gige.urdf.xacro" />
-
-	<!-- ELP USB Camera w/ Normal Lens -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgb/elp_usb_camera.urdf.xacro" />
-
-	<!-- ====================================================
-                         	RGBD
+     <!-- ====================================================
+     RGBD
      ========================================================= -->
-
-	<!-- Asus Xtion PRO -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/asus_xtion_pro.urdf.xacro" />
-	<!-- Kinect -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/kinect.urdf.xacro" />
-	<!-- KinectV2 -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/kinectv2.urdf.xacro" />
-	<!-- Orbbec Astra -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/orbbec_astra.urdf.xacro" />
-	<!-- Fotonic E Series -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/fotonic_e.urdf.xacro" />
-	<!-- Intel Realsense R200 -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_r200.urdf.xacro" />
-	<!-- Intel Realsense D415 -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_d415.urdf.xacro" />
-
+     <!-- Asus Xtion PRO -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/asus_xtion_pro.urdf.xacro" />
+     <!-- Kinect -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/kinect.urdf.xacro" />
+     <!-- KinectV2 -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/kinectv2.urdf.xacro" />
+     <!-- Orbbec Astra -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/orbbec_astra.urdf.xacro" />
+     <!-- Fotonic E Series -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/fotonic_e.urdf.xacro" />
+     <!-- Intel Realsense R200 -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_r200.urdf.xacro" />
+     <!-- Intel Realsense D415 -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/cameras/rgbd/realsense_d415.urdf.xacro" />
 
 </robot>

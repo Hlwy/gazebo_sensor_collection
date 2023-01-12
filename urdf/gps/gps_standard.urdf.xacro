@@ -1,61 +1,60 @@
 <?xml version="1.0"?>
 <robot name="sensor_standard_gps" xmlns:xacro="http://ros.org/wiki/xacro">
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:macro name="sensor_standard_gps" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
 
-  	<xacro:macro name="sensor_standard_gps" params="name parent *origin color ref_lat ref_long ref_head drift vel_drift noise vel_noise update_rate">
+          <joint name="${name}_joint" type="fixed">
+               <axis xyz="0 1 0"/>
+               <xacro:insert_block name="origin"/>
+               <parent link="${parent}"/>
+               <child link="${name}_link"/>
+          </joint>
 
-		<joint name="${name}_joint" type="fixed">
-			<axis xyz="0 1 0"/>
-			<xacro:insert_block name="origin"/>
-			<parent link="${parent}"/>
-			<child link="${name}_link"/>
-		</joint>
+          <link name="${name}_link">
+               <inertial>
+                    <mass value="0.001"/>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+               </inertial>
+               <visual>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
+               <collision>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                    </geometry>
+               </collision>
+          </link>
 
-		<link name="${name}_link">
-			<inertial>
-				<mass value="0.001"/>
-				<origin rpy="0 0 0" xyz="0 0 0"/>
-				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
-			</inertial>
-			<visual>
-				<origin rpy="0 0 0" xyz="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
-				</geometry>
-				<xacro:color_material color="${color}"/>
-			</visual>
-			<collision>
-				<origin rpy="0 0 0" xyz="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
-				</geometry>
-			</collision>
-		</link>
+          <!-- ====================================================
+          Gazebo
+          ========================================================= -->
 
-		<!-- ====================================================
-						  Gazebo
-		========================================================= -->
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
-		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
-
-		<gazebo>
-			<plugin name="${name}_controller" filename="libgazebo_ros_gps.so">
-				<alwaysOn>1</alwaysOn>
-				<updateRate>${update_rate}</updateRate>
-				<bodyName>${name}_link</bodyName>
-				<frameId>${name}_link</frameId>
-				<topicName>/${name}</topicName>
-				<referenceLatitude>${ref_lat}</referenceLatitude>
-				<referenceLongitude>${ref_long}</referenceLongitude>
-				<referenceHeading>${ref_head}</referenceHeading>
-				<velocityTopicName>${name}/fix_velocity</velocityTopicName>
-				<drift>${drift} ${drift} ${drift}</drift>
-				<gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
-				<velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
-				<velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
-			</plugin>
-		</gazebo>
-	</xacro:macro>
+          <gazebo>
+               <plugin name="${name}_controller" filename="libgazebo_ros_gps.so">
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>${update_rate}</updateRate>
+                    <bodyName>${name}_link</bodyName>
+                    <frameId>${name}_link</frameId>
+                    <topicName>/${name}</topicName>
+                    <referenceLatitude>${ref_lat}</referenceLatitude>
+                    <referenceLongitude>${ref_long}</referenceLongitude>
+                    <referenceHeading>${ref_head}</referenceHeading>
+                    <velocityTopicName>${name}/fix_velocity</velocityTopicName>
+                    <drift>${drift} ${drift} ${drift}</drift>
+                    <gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
+                    <velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
+                    <velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
+               </plugin>
+          </gazebo>
+     </xacro:macro>
 
 </robot>

@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
 <robot name="motion_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
-	<!-- ====================================================
-                         	Misc
+     <!-- ====================================================
+     Misc
      ========================================================= -->
-	<!-- Imu -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_standard.urdf.xacro" />
+     <!-- Imu -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_standard.urdf.xacro" />
+     <!-- Imu hector -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_hector.urdf.xacro" />
+     <!-- Imu Terra -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_mod.urdf.xacro" />
+     <!-- Imu for Arducopter -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_quad.urdf.xacro" />
 
-	<!-- Imu hector -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_hector.urdf.xacro" />
-
-	<!-- Imu Terra -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_mod.urdf.xacro" />
-
-	<!-- Imu for Arducopter -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/imu_quad.urdf.xacro" />
-
-	<!-- Rotary Encoder -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/rotary_encoder.urdf.xacro" />
+     <!-- Rotary Encoder -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/motion/rotary_encoder.urdf.xacro" />
 
 </robot>

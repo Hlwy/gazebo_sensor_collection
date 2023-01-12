@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot name="devices" xmlns:xacro="http://ros.org/wiki/xacro">
-	<!-- ====================================================
-                         	SITL Devices
+     <!-- ====================================================
+     SITL Devices
      ========================================================= -->
-	<!-- Ardupilot Plugin -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/devices/apm_plugin.urdf.xacro" />
+     <!-- Ardupilot Plugin -->
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/devices/apm_plugin.urdf.xacro" />
 
 </robot>

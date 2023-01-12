@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
      <!-- ====================================================
-                           Material Colors
+     Material Colors
      ========================================================= -->
 
      <xacro:macro name="color_material" params="color">

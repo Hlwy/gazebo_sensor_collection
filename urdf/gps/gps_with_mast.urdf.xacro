@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot name="sensor_gps_with_mast" xmlns:xacro="http://ros.org/wiki/xacro">
-
      <xacro:property name="mast_height" value="0.5" />
      <xacro:property name="mast_radius" value="0.010" />
 
@@ -51,42 +50,42 @@
                <visual>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
                <collision>
                     <origin rpy="0 0 0" xyz="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/gps/antenna_3GO16.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                </collision>
           </link>
 
           <!-- ====================================================
-                                Gazebo
+          Gazebo
           ========================================================= -->
 
           <xacro:color_gazebo parent="${name}_mast_link" color="black"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
           <gazebo>
-			<plugin name="${name}_controller" filename="libgazebo_ros_gps.so">
-				<alwaysOn>1</alwaysOn>
-				<updateRate>${update_rate}</updateRate>
-				<bodyName>${name}_link</bodyName> <!-- must be the link of the gps device, not the base_link or base_footprint -->
-				<frameId>${name}_link</frameId>
-				<topicName>${name}/fix</topicName>
-				<referenceLatitude>${ref_lat}</referenceLatitude>
-				<referenceLongitude>${ref_long}</referenceLongitude>
-				<referenceHeading>${ref_head}</referenceHeading>
-				<velocityTopicName>${name}/fix_velocity</velocityTopicName>
-				<drift>${drift} ${drift} ${drift}</drift>
-				<gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
-				<velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
-				<velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
-			</plugin>
-		</gazebo>
+               <plugin name="${name}_controller" filename="libgazebo_ros_gps.so">
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>${update_rate}</updateRate>
+                    <bodyName>${name}_link</bodyName> <!-- must be the link of the gps device, not the base_link or base_footprint -->
+                    <frameId>${name}_link</frameId>
+                    <topicName>${name}/fix</topicName>
+                    <referenceLatitude>${ref_lat}</referenceLatitude>
+                    <referenceLongitude>${ref_long}</referenceLongitude>
+                    <referenceHeading>${ref_head}</referenceHeading>
+                    <velocityTopicName>${name}/fix_velocity</velocityTopicName>
+                    <drift>${drift} ${drift} ${drift}</drift>
+                    <gaussianNoise>${noise} ${noise} ${noise}</gaussianNoise>
+                    <velocityDrift>${vel_drift} ${vel_drift} ${vel_drift}</velocityDrift>
+                    <velocityGaussianNoise>${vel_noise} ${vel_noise} ${vel_noise}</velocityGaussianNoise>
+               </plugin>
+          </gazebo>
 
      </xacro:macro>
 

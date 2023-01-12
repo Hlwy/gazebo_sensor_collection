@@ -55,7 +55,7 @@
                <visual>
                     <origin xyz="0 0 0" rpy="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/orbbec/orbbec_astra.dae" scale="${orbbec_astra_scale} ${orbbec_astra_scale} ${orbbec_astra_scale}"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/orbbec/orbbec_astra.dae" scale="${orbbec_astra_scale} ${orbbec_astra_scale} ${orbbec_astra_scale}"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>
@@ -101,7 +101,7 @@
           </link>
 
           <!-- RGBD sensor for simulation, same as Kinect -->
-          <sensor_orbbec_astra_gazebo name="${name}"/>
+          <xacro:sensor_orbbec_astra_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>

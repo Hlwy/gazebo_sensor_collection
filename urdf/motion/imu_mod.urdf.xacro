@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot name="sensor_imu_modified" xmlns:xacro="http://ros.org/wiki/xacro">
-
      <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
      <xacro:macro name="sensor_modified_imu" params="name parent *origin color update_rate noise yaw_offset yaw_drift yaw_noise rate_offset rate_drift rate_noise accel_drift accel_offset accel_noise">
@@ -34,7 +33,7 @@
           </link>
 
           <!-- ====================================================
-                                Gazebo
+          Gazebo
           ========================================================= -->
 
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
@@ -43,7 +42,7 @@
                <plugin name="${name}_controller" filename="libgazebo_ros_imu_mod.so">
                     <alwaysOn>true</alwaysOn>
                     <topicName>/${name}</topicName>
-				<topicNameCustom>/${name}/custom</topicNameCustom>
+                    <topicNameCustom>/${name}/custom</topicNameCustom>
 
                     <serviceName>${name}/service</serviceName>
                     <bodyName>${name}_link</bodyName>

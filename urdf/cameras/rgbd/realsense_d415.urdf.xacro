@@ -35,7 +35,7 @@
                     <!-- <origin xyz="${d415_cam_mount_from_center_offset} ${-d415_cam_depth_py} 0" rpy="${M_PI/2} 0 ${M_PI/2}"/> -->
                     <origin xyz="${d415_cam_mount_from_center_offset} 0 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/intel/realsense_d415.stl" />
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/intel/realsense_d415.stl" />
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>

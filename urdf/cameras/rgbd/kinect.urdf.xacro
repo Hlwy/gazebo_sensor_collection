@@ -1,132 +1,129 @@
 <?xml version="1.0"?>
 <robot name="sensor_kinect" xmlns:xacro="http://ros.org/wiki/xacro">
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
 
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/includes/materials.urdf.xacro"/>
+     <xacro:property name="M_PI" value="3.1415926535897931" />
+     <xacro:property name="cam_px" value="-0.087" />
+     <xacro:property name="cam_py" value="-0.0125" />
+     <xacro:property name="cam_pz" value="0.2870" />
+     <xacro:property name="cam_or" value="0" />
+     <xacro:property name="cam_op" value="0" />
+     <xacro:property name="cam_oy" value="0" />
 
-	<xacro:property name="M_PI" value="3.1415926535897931" />
-	<xacro:property name="cam_px" value="-0.087" />
-	<xacro:property name="cam_py" value="-0.0125" />
-	<xacro:property name="cam_pz" value="0.2870" />
-	<xacro:property name="cam_or" value="0" />
-	<xacro:property name="cam_op" value="0" />
-	<xacro:property name="cam_oy" value="0" />
+     <xacro:macro name="sensor_kinect" params="name parent *origin color:='white'">
+          <joint name="${name}_rgb_joint" type="fixed">
+               <xacro:insert_block name="origin" />
+               <parent link="${parent}"/>
+               <child link="${name}_rgb_frame" />
+          </joint>
 
-	<xacro:macro name="sensor_kinect" params="name parent *origin color:='white'">
+          <link name="${name}_rgb_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+               </inertial>
+          </link>
 
-		<joint name="${name}_rgb_joint" type="fixed">
-			<xacro:insert_block name="origin" />
-			<parent link="${parent}"/>
-			<child link="${name}_rgb_frame" />
-		</joint>
+          <joint name="${name}_rgb_optical_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+               <parent link="${name}_rgb_frame" />
+               <child link="${name}_rgb_optical_frame" />
+          </joint>
 
-		<link name="${name}_rgb_frame">
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-			</inertial>
-		</link>
+          <link name="${name}_rgb_optical_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+               </inertial>
+          </link>
 
-		<joint name="${name}_rgb_optical_joint" type="fixed">
-			<origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-			<parent link="${name}_rgb_frame" />
-			<child link="${name}_rgb_optical_frame" />
-		</joint>
+          <joint name="${name}_joint" type="fixed">
+               <origin xyz="-0.031 ${-cam_py} -0.016" rpy="0 0 0"/>
+               <parent link="${name}_rgb_frame"/>
+               <child link="${name}_link"/>
+          </joint>
 
-		<link name="${name}_rgb_optical_frame">
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-			</inertial>
-		</link>
+          <link name="${name}_link">
+               <visual>
+                    <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/microsoft/kinect.dae"/>
+                    </geometry>
+                    <xacro:color_material color="${color}"/>
+               </visual>
+               <collision>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+                    <geometry>
+                         <box size="0.07271 0.27794 0.073"/>
+                    </geometry>
+               </collision>
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+               </inertial>
+          </link>
 
-		<joint name="${name}_joint" type="fixed">
-			<origin xyz="-0.031 ${-cam_py} -0.016" rpy="0 0 0"/>
-			<parent link="${name}_rgb_frame"/>
-			<child link="${name}_link"/>
-		</joint>
+          <!-- The fixed joints & links below are usually published by static_transformers launched by the OpenNi launch
+          files. However, for Gazebo simulation we need them, so we add them here.
+          (Hence, don't publish them additionally!) -->
+          <joint name="${name}_depth_joint" type="fixed">
+               <origin xyz="0 ${2 * -cam_py} 0" rpy="0 0 0" />
+               <parent link="${name}_rgb_frame" />
+               <child link="${name}_depth_frame" />
+          </joint>
 
-		<link name="${name}_link">
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/cameras/microsoft/kinect.dae"/>
-				</geometry>
-				<xacro:color_material color="${color}"/>
-			</visual>
-			<collision>
-				<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-				<geometry>
-					<box size="0.07271 0.27794 0.073"/>
-				</geometry>
-			</collision>
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-			</inertial>
-		</link>
+          <link name="${name}_depth_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+               </inertial>
+          </link>
 
-		<!-- The fixed joints & links below are usually published by static_transformers launched by the OpenNi launch
-		files. However, for Gazebo simulation we need them, so we add them here.
-		(Hence, don't publish them additionally!) -->
-		<joint name="${name}_depth_joint" type="fixed">
-			<origin xyz="0 ${2 * -cam_py} 0" rpy="0 0 0" />
-			<parent link="${name}_rgb_frame" />
-			<child link="${name}_depth_frame" />
-		</joint>
+          <joint name="${name}_depth_optical_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+               <parent link="${name}_depth_frame" />
+               <child link="${name}_depth_optical_frame" />
+          </joint>
 
-		<link name="${name}_depth_frame">
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-			</inertial>
-		</link>
+          <link name="${name}_depth_optical_frame">
+               <inertial>
+                    <mass value="0.001" />
+                    <origin xyz="0 0 0" />
+                    <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+               </inertial>
+          </link>
 
-		<joint name="${name}_depth_optical_joint" type="fixed">
-			<origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
-			<parent link="${name}_depth_frame" />
-			<child link="${name}_depth_optical_frame" />
-		</joint>
+          <!-- Kinect sensor for simulation -->
+          <xacro:sensor_kinect_gazebo name="${name}"/>
+          <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
-		<link name="${name}_depth_optical_frame">
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-			</inertial>
-		</link>
+     </xacro:macro>
 
-		<!-- Kinect sensor for simulation -->
-		<sensor_kinect_gazebo name="${name}"/>
-		<xacro:color_gazebo parent="${name}_link" color="${color}"/>
+     <!-- ====================================================
+     Gazebo
+     ========================================================= -->
+     <xacro:macro name="sensor_kinect_gazebo" params="name">
 
-	</xacro:macro>
+          <gazebo reference="${name}_link">
+               <sensor type="depth" name="${name}_sensor">
+                    <always_on>1</always_on>
+                    <update_rate>50.0</update_rate>
 
-	<!-- ====================================================
-					  Gazebo
-	========================================================= -->
-
-	<xacro:macro name="sensor_kinect_gazebo" params="name">
-
-		<gazebo reference="${name}_link">
-			<sensor type="depth" name="${name}_sensor">
-				<always_on>1</always_on>
-				<update_rate>50.0</update_rate>
-
-				<camera>
-					<horizontal_fov>${60.0*M_PI/180.0}</horizontal_fov>
-					<image>
-						<format>R8G8B8</format>
-						<width>640</width>
-						<height>480</height>
-					</image>
-					<clip>
-						<near>0.05</near>
-						<far>8.0</far>
-					</clip>
+                    <camera>
+                         <horizontal_fov>${60.0*M_PI/180.0}</horizontal_fov>
+                         <image>
+                              <format>R8G8B8</format>
+                              <width>640</width>
+                              <height>480</height>
+                         </image>
+                         <clip>
+                              <near>0.05</near>
+                              <far>8.0</far>
+                         </clip>
                          <distortion>
                               <k1>0.0</k1>
                               <k2>0.0</k2>
@@ -135,9 +132,9 @@
                               <p2>0.0</p2>
                               <center>0.5 0.5</center>
                          </distortion>
-				</camera>
+                    </camera>
 
-				<plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
+                    <plugin name="${name}_controller" filename="libgazebo_ros_camera.so">
                          <camera_name>${name}</camera_name>
                          <ros>
                               <!-- <namespace>custom_ns</namespace> -->
@@ -148,14 +145,14 @@
                               <remapping>${name}/points:=${name}/depth/points</remapping>
                          </ros>
 
-					<frame_name>${name}_depth_optical_frame</frame_name>
-					<baseline>0.1</baseline>
-					<min_depth>0.4</min_depth>
-					<max_depth>5.0</max_depth>
-				</plugin>
-			</sensor>
-		</gazebo>
+                         <frame_name>${name}_depth_optical_frame</frame_name>
+                         <baseline>0.1</baseline>
+                         <min_depth>0.4</min_depth>
+                         <max_depth>5.0</max_depth>
+                    </plugin>
+               </sensor>
+          </gazebo>
 
-	</xacro:macro>
+     </xacro:macro>
 
 </robot>

@@ -7,7 +7,14 @@
      <xacro:include filename="$(find gazebo_sensor_collection)/urdf/all_sensors.urdf.xacro" />
 
      <xacro:macro name="world" params="">
-          <link name="world_link"/>
+          <link name="world_link">
+               <collision>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
+                    <geometry>
+                         <box size=".1 .1 .1"/>
+                    </geometry>
+               </collision>
+          </link>
           <gazebo reference="world_link">
                <static>true</static>
           </gazebo>
@@ -31,116 +38,119 @@
      <!-- ====================================================
                     LIDAR Sensors
      ========================================================= -->
-     <!-- <xacro:base name="hokuyo_urg04lx" idx="0"/>
-     <xacro:sensor_hokuyo_urg04lx name="hokuyo1" parent="base_hokuyo_urg04lx" color="black" visualize="false">
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_hdl_32e name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hdl_32e> -->
+
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_hokuyo_urg04lx name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
           <origin xyz="0 0 0" rpy="0 0 0"/>
      </xacro:sensor_hokuyo_urg04lx> -->
 
-     <!-- <xacro:base name="hokuyo_utm30lx" idx="1"/>
-     <xacro:sensor_hokuyo_utm30lx name="hokuyo2" parent="base_hokuyo_utm30lx" color="black" visualize="false">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_hokuyo_utm30lx> -->
-
-     <!-- <xacro:base name="hokuyo_ust10lx" idx="0"/>
-     <xacro:sensor_hokuyo_ust10lx name="hokuyo3" parent="base_hokuyo_ust10lx" color="black" visualize="true">
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_hokuyo_ust10lx name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
           <origin xyz="0 0 0" rpy="0 0 0"/>
      </xacro:sensor_hokuyo_ust10lx> -->
 
-     <!-- <xacro:base name="hokuyo3d" idx="0"/>
-     <xacro:sensor_hokuyo3d name="hokuyo4" parent="base_hokuyo3d" color="black" visualize="true">
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_hokuyo_utm30lx name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_hokuyo_utm30lx> -->
+
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_hokuyo3d name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
           <origin xyz="0 0 0" rpy="0 0 0"/>
      </xacro:sensor_hokuyo3d> -->
 
-     <!-- <xacro:base name="sick_s3000" idx="0"/>
-     <xacro:sensor_sick_s3000 name="sick" parent="base_sick_s3000" color="black" visualize="true">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_sick_s3000> -->
-
-     <!-- <xacro:base name="sick_s300" idx="0"/>
-     <xacro:sensor_sick_s300 name="sick" parent="base_sick_s300" color="black" visualize="true">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_sick_s300> -->
-
-     <!-- <xacro:base name="sick_tim571" idx="0"/>
-     <xacro:sensor_sick_tim571 name="sick" parent="base_sick_tim571" color="black" visualize="true">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_sick_tim571> -->
-
-     <!-- <xacro:base name="rplidar" idx="0"/>
-     <xacro:sensor_rplidar name="rplidar" parent="base_rplidar" color="black" visualize="true">
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_rplidar name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
           <origin xyz="0 0 0" rpy="0 0 0"/>
      </xacro:sensor_rplidar> -->
 
-     <!-- <xacro:base name="vlp_16" idx="0"/>
-     <xacro:sensor_vlp_16 name="vlp" parent="base_vlp_16" color="black" visualize="true">
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_sick_s300 name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_s300> -->
+
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_sick_s3000 name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_s3000> -->
+
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_sick_tim571 name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+     </xacro:sensor_sick_tim571> -->
+
+     <!-- <xacro:base name="scan_base_tf" idx="0"/>
+     <xacro:sensor_vlp_16 name="lidar" parent="base_scan_base_tf" color="black" visualize="true">
           <origin xyz="0 0 0" rpy="0 0 0"/>
      </xacro:sensor_vlp_16> -->
 
-     <!-- <xacro:base name="hdl_32e" idx="0"/>
-     <xacro:sensor_hdl_32e name="hdl" parent="base_hdl_32e" color="black" visualize="true">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_hdl_32e> -->
 
      <!-- ====================================================
                     RGB Sensors
      ========================================================= -->
-     <!-- <xacro:base name="elp_usb_cam" idx="0"/>
-     <xacro:sensor_elp_usb_cam name="camera" parent="base_elp_usb_cam">
-          <origin xyz="0 0 0.25" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_elp_usb_cam name="camera" parent="base_cam_base_tf">
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_elp_usb_cam > -->
 
-     <xacro:base name="ueye_cp_gige" idx="0"/>
-     <xacro:sensor_ueye_cp_gige name="camera" parent="base_ueye_cp_gige" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_ueye_cp_gige >
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_ueye_cp_gige name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
+     </xacro:sensor_ueye_cp_gige > -->
 
-     <!-- <xacro:base name="axis_m5013" idx="0"/>
-     <xacro:sensor_axis_m5013 name="camera" parent="base_axis_m5013" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_axis_m5013 name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_axis_m5013 > -->
 
-     <!-- <xacro:base name="axis_p5512" idx="0"/>
-     <xacro:sensor_axis_p5512 name="camera" parent="base_axis_p5512" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_axis_p5512 name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_axis_p5512 > -->
 
 
      <!-- ====================================================
                     RGB-D Sensors
      ========================================================= -->
-     <!-- <xacro:base name="asus_xtion_pro" idx="0"/>
-     <xacro:sensor_asus_xtion_pro name="camera" parent="base_asus_xtion_pro" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_asus_xtion_pro name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_asus_xtion_pro > -->
 
-     <!-- <xacro:base name="kinect" idx="0"/>
-     <xacro:sensor_kinect name="camera" parent="base_kinect" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_kinect > -->
-
-     <!-- <xacro:base name="kinectv2" idx="0"/>
-     <xacro:sensor_kinectv2 name="camera" parent="base_kinectv2" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_kinectv2 > -->
-
-     <!-- <xacro:base name="orbbec_astra" idx="0"/>
-     <xacro:sensor_orbbec_astra name="camera" parent="base_orbbec_astra" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-     </xacro:sensor_orbbec_astra > -->
-
-     <!-- <xacro:base name="fotonic" idx="0"/>
-     <xacro:sensor_fotonic name="camera" parent="base_fotonic" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_fotonic name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_fotonic > -->
 
-     <!-- <xacro:base name="realsense_r200" idx="0"/>
-     <xacro:sensor_realsense_r200 name="realsense_r200" parent="base_realsense_r200" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_kinect name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
+     </xacro:sensor_kinect > -->
+
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_kinectv2 name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
+     </xacro:sensor_kinectv2 > -->
+
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_orbbec_astra name="camera" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
+     </xacro:sensor_orbbec_astra > -->
+
+
+
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_realsense_r200 name="realsense_r200" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_realsense_r200 > -->
 
-     <!-- <xacro:base name="realsense_d415" idx="0"/>
-     <xacro:sensor_realsense_d415 name="realsense_d415" parent="base_realsense_d415" >
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+     <!-- <xacro:base name="cam_base_tf" idx="0"/>
+     <xacro:sensor_realsense_d415 name="realsense_d415" parent="base_cam_base_tf" >
+          <origin xyz="0 0 0.05" rpy="0 0 0"/>
      </xacro:sensor_realsense_d415 > -->
 
 

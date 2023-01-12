@@ -15,7 +15,7 @@
                <visual>
                     <origin xyz="0 0 0" rpy="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/lidars/hokuyo/hokuyo_utm_30lx.dae"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/lidars/hokuyo/hokuyo_utm_30lx.dae"/>
                     </geometry>
                     <xacro:color_material color="${color}"/>
                </visual>

@@ -30,6 +30,7 @@
      <depend>trajectory_msgs</depend>
      <depend>visualization_msgs</depend>
      <depend>camera_info_manager</depend>
+     <depend>gazebo</depend>
 
      <!-- Use build_depend for packages you need at compile time: -->
      <build_depend>rclpy</build_depend>
@@ -56,7 +57,7 @@
      <exec_depend>rclpy</exec_depend>
      <exec_depend>rclcpp</exec_depend>
      <!-- SECTION: Hector-based Plugin Building -->
-     <exec_depend>gazebo</exec_depend>
+     <!-- <exec_depend>gazebo</exec_depend> -->
      <exec_depend>gazebo_ros</exec_depend>
      <exec_depend>geographic_msgs</exec_depend>
      <!-- <exec_depend>std_msgs</exec_depend> -->

@@ -1,0 +1,34 @@
+<?xml version='1.0' ?>
+
+<launch>
+  <arg name="map_package" default="factory" description="Name of the map package" />
+  <arg name="world_name" default="cafe" description="Name of the rmf_chart_demos map to simulate" />
+  <arg name="headless" default="0" />
+
+  <!-- Gazebo classic was chosen-->
+  <group>
+    <arg name="gazebo_version" default="11"/>
+    <!-- <let name="world_path" value="$(find-pkg-share $(var map_package))/maps/$(var world_name)/$(var world_name).world" /> -->
+    <let name="world_path" value="/usr/share/gazebo-11/worlds/$(var world_name).world" />
+    <!-- <let name="model_path" value="$(find-pkg-share $(var map_package))/maps/$(var world_name)/models:$(find-pkg-share rmf_chart_demos_assets)/models:/usr/share/gazebo-$(var gazebo_version)/models" /> -->
+    <!-- <let name="resource_path" value="$(find-pkg-share rmf_demos_assets):/usr/share/gazebo-$(var gazebo_version)" /> -->
+    <!-- <let name="plugin_path" value="$(find-pkg-prefix factory)/lib" /> -->
+
+    <executable cmd="gzserver --verbose -s libgazebo_ros_factory.so -s libgazebo_ros_init.so $(var world_path)" output="both">
+      <!-- <env name="GAZEBO_MODEL_PATH" value="$(var model_path)" />
+      <env name="GAZEBO_RESOURCE_PATH" value="$(var resource_path)" /> -->
+      <!-- <env name="GAZEBO_PLUGIN_PATH" value="$(var plugin_path)" /> -->
+      <env name="GAZEBO_MODEL_DATABASE_URI" value="" />
+      <!-- <env name="MENGE_RESOURCE_PATH" value="$(var menge_resource_path)"/> -->
+    </executable>
+
+    <group unless="$(var headless)">
+      <executable cmd="gzclient --verbose $(var world_path)" output="both">
+        <!-- <env name="GAZEBO_MODEL_PATH" value="$(var model_path)" /> -->
+        <!-- <env name="GAZEBO_RESOURCE_PATH" value="$(var resource_path)" /> -->
+        <!-- <env name="GAZEBO_PLUGIN_PATH" value="$(var plugin_path)" /> -->
+      </executable>
+    </group>
+  </group>
+
+</launch>

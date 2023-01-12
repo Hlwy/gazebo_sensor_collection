@@ -1,35 +1,34 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-
      <xacro:macro name="sensor_rotary_encoder" params="ns:=/ parent joint:=front_left_wheel_rev d:=0.15 topic:=/encoder update_rate:=100.0 ppr:=150">
 
           <link name="${parent}_encoder_link">
-			<collision>
+               <collision>
                     <origin rpy="-0.02 0.03 -0.02" xyz="0 0 0"/>
                     <geometry>
                          <box size=".03 .04 .04"/>
                     </geometry>
-			</collision>
+               </collision>
 
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<geometry>
-					<mesh filename="package://gazebo_sensor_collection/meshes/motion/rotary_encoder.dae"/>
-				</geometry>
-			</visual>
+               <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/motion/rotary_encoder.dae"/>
+                    </geometry>
+               </visual>
 
-			<inertial>
-				<mass value="1e-5" />
-				<origin xyz="0 0 0" rpy="0 0 0"/>
-				<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
-			</inertial>
-		</link>
+               <inertial>
+                    <mass value="1e-5" />
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+               </inertial>
+          </link>
 
-		<joint name="${parent}_encoder_joint" type="fixed">
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<parent link="${parent}"/>
-			<child link="${parent}_encoder_link"/>
-		</joint>
+          <joint name="${parent}_encoder_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 0 0"/>
+               <parent link="${parent}"/>
+               <child link="${parent}_encoder_link"/>
+          </joint>
 
 
           <gazebo>

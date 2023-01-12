@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot name="misc_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
-	<!-- ====================================================
-                         	Misc
+     <!-- ====================================================
+     Misc
      ========================================================= -->
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/sonar.urdf.xacro" />
-	<xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/approximate_battery.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/sonar.urdf.xacro" />
+     <xacro:include filename="$(find gazebo_sensor_collection)/urdf/misc/approximate_battery.urdf.xacro" />
 
 </robot>

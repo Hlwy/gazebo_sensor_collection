@@ -7,9 +7,15 @@
           <joint name="${name}_joint" type="fixed">
                <xacro:insert_block name="origin"/>
                <parent link="${parent}"/>
+               <child link="${name}_base_link"/>
+          </joint>
+          <link name="${name}_base_link"/>
+
+          <joint name="${name}_base_joint" type="fixed">
+               <origin xyz="0 0 0" rpy="0 ${-M_PI/2} ${M_PI}" />
+               <parent link="${name}_base_link"/>
                <child link="${name}_link"/>
           </joint>
-
           <link name="${name}_link"> <!-- TODO: review masses, inertial -->
                <inertial>
                     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
@@ -21,19 +27,19 @@
                     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
                          <xacro:color_material color="${color}"/>
                          <geometry>
-                              <mesh filename="package://gazebo_sensor_collection/meshes/cameras/ids/ueye_cp_gige.stl" scale="1.0 1.0 1.0"/>
+                              <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/ids/ueye_cp_gige.stl" scale="1.0 1.0 1.0"/>
                          </geometry>
                </visual>
                <collision>
                     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
                     <geometry>
-                         <mesh filename="package://gazebo_sensor_collection/meshes/cameras/ids/ueye_cp_gige.stl" scale="1.0 1.0 1.0"/>
+                         <mesh filename="file://$(find gazebo_sensor_collection)/meshes/cameras/ids/ueye_cp_gige.stl" scale="1.0 1.0 1.0"/>
                     </geometry>
                </collision>
           </link>
 
           <joint name="${name}_rgb_joint" type="fixed">
-               <origin xyz="0 0 0" rpy="0 0 0" />
+               <origin xyz="0 0 0" rpy="0 ${M_PI/2} 0" />
                <parent link="${name}_link"/>
                <child link="${name}_rgb_frame"/>
           </joint>
@@ -47,7 +53,7 @@
           </link>
 
           <joint name="${name}_rgb_optical_joint" type="fixed">
-               <origin xyz="0 0 0" rpy="1.5707 0 1.5707" />
+               <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${M_PI/2}" />
                <parent link="${name}_rgb_frame"/>
                <child link="${name}_optical_frame"/>
           </joint>
@@ -60,7 +66,7 @@
                </inertial>
           </link>
 
-          <sensor_ueye_cp_gige_gazebo name="${name}"/>
+          <xacro:sensor_ueye_cp_gige_gazebo name="${name}"/>
           <xacro:color_gazebo parent="${name}_link" color="${color}"/>
 
      </xacro:macro>
@@ -70,7 +76,7 @@
      ========================================================= -->
 
      <xacro:macro name="sensor_ueye_cp_gige_gazebo" params="name">
-          <gazebo reference="${name}_link">
+          <gazebo reference="${name}_base_link">
                <sensor type="camera" name="${name}_sensor">
                     <update_rate>30.0</update_rate>
                     <always_on>1</always_on>
